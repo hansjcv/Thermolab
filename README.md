@@ -1,2 +1,2 @@
 # Thermolab
-Thermolab software pages
+Thermodynamics in MATLAB
