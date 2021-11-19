@@ -6,7 +6,7 @@ You can download p-coded MATLAB files for the main Thermolab functions. They wil
 
 ### Download
 
-
+For download click on the view Github link on top.
 
 ### To cite (until the main paper is published)
 
