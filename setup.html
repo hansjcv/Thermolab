@@ -31,9 +31,23 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 
 <div id="maincontent">
     <h1>Installation</h1>
-    <p> To use Thermolab you need to have MATLAB installed but no other installation is required. 
-    Just unzip the downloaded file and store it at a preferred location. To test if the codes work you can run a script in the Figures folder. 
-    Open MATLAB, open the .m file in the editor and click run (or press F5) in the editor window</p>
+    <p>
+        To use Thermolab you need to have MATLAB installed but no other installation is required.
+        Just unzip the downloaded file and store it at a preferred location. To test if the codes work you can run a script in the Figures folder.
+        Open MATLAB, open the .m file in the editor and click run (or press F5) in the editor window.
+    </p>
+
+    <p>
+        To use Thermolab functions in your own codes, the Thermolab folder has to be on the MATLAB path. This is automatically the case when you put your codes
+        in the same folder as the Thermolab files. If you want to organize your codes in subfolders and still access the Thermolab functions the main Thermolab
+        folder has to be added to the MATLAB path. The codes in the Figure folder have the addpath ../ in the beginning of the code so it adds the folder one level
+        up in the folder structure to the MATLAB path.
+    </p>
+
+    <h2>Startup file</h2>
+    <p> To access Thermolab codes from anywhere on the drive it may be convenient to add the path where the Thermolab codes have been unzipped in a MATLAB startup.m file. This file should
+    then be stored somewhere in a MATLAB folder that is on the MATLAB path by default. In Windows this is usually the folder named MATLAB in 'Documents'. Alternatively the entire path to the Thermolab
+    files can be added in the beginning of each code that uses the MATLAB functions.</p>
 </div>
 </body>
 </html>
