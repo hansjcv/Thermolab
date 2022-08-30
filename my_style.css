@@ -75,7 +75,7 @@ padding         : 5px;
     #header ul li a {
         text-decoration: none;
         color: blue;
-        font-size: small;
+        font-size: x-large;
     }
 #header ul li a:hover{
 color         :red;
