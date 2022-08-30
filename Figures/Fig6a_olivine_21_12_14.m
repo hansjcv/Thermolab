@@ -1,8 +1,8 @@
 clear,clf,addpath ../
 % Fig6a
-T = linspace(1200,2000,10) + 273.15;
+T = linspace(1200,2000,30) + 273.15;
 P = 1e5;
-Xsys  = linspace(0,1,11);            
+Xsys  = linspace(0,1,31);            
 X     = {'Si','Fe','Mg','O'};
 Nsys1 = [1      0    2   4];
 Nsys2 = [1      2    0   4];

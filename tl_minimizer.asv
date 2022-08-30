@@ -18,8 +18,9 @@ if ~exist('g0','var')
 end
 p_it    = cell(1,length(phs_name));
 td_ini  = td;
-gmin_old = 1e10;
-for i_ref = 1:nref       
+gmin = 1e10;
+for i_ref = 1:nref   
+    
     [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di);
     LB            = zeros(1,size(g,1));
     [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display','off'));    
@@ -56,7 +57,7 @@ for i_ref = 1:nref
             dg_it = max(abs((diff(gmin_ref(i_ref-3:i_ref)))));
         end        
         if i_ref>3 && dg_it<eps_dg || max(z_window)<dz_tol,break,end        
-        if i_ref < nref && gmin_old >= gmin
+        if i_ref < nref %&& gmin_old > gmin
             for i_sol = 1:length(phs_name)
                 p{i_sol} = [p_it{i_sol}; p_ref{i_sol}];
             end
@@ -64,8 +65,9 @@ for i_ref = 1:nref
     end    
     if disp_ref == 1
         plot(1:i_ref,gmin_ref(1:i_ref)),title([dg_it,i_ref,length(pc_id),max(z_window)]),drawnow
-    end           
-    gmin_old = gmin;
+    end
+            
+
 end
 alph = alph_iref{find(exitflag==1,1,'last')};
 p = p_iref{find(exitflag==1,1,'last')};

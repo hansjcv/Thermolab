@@ -9,27 +9,23 @@ Cvar     = [linspace(1e-2,0.43989,500) linspace(0.4399,0.4488,500) linspace(0.44
 fluid    = 'Fluid-CO2-H2O';
 phs_name = {fluid,'Chlorite','Antigorite','Clinopyroxene','Talc','Magnesite','Dolomite','Brucite','Olivine','per,tc-ds55','q,tc-ds55','ky,tc-ds55','sill,tc-ds55','and,tc-ds55'};
 td        = init_thermo(phs_name,Cname,'solution_models_soapstone');
-for iz = 1:length(td)
-    td(iz).dz = ones(size(td(iz).dz))/15;
-end
 [T2d,P2d,X2d] = ndgrid(T,P,Cvar);
 p         = props_generate(td);     % generate endmember proportions
 options.nref     = 150; % max number of iterations
 options.eps_dg   = 1e-12; % tolerance to stop iterations when difference between global gibbs minimimum is below this
 options.dz_tol   = 1e-14; % tolerance to stop iterations when z window becomes below this
-options.z_window = ones(size(phs_name))*0.2; % the window over which the refined grid is generated
-options.dz_fact  = ones(size(phs_name))*3; % the factor to determine new dz spacing, the larger, the more pseudocompounds
-options.ref_fact = 1.5; % the factor to control how the z_window is narrowed each iteration, the larger, the smaller the z window over which new grid is generated
+options.z_window = ones(size(phs_name))*0.085; % the window over which the refined grid is generated
+options.dz_fact  = ones(size(phs_name))*1.5; % the factor to determine new dz spacing, the larger, the more pseudocompounds
+options.ref_fact = 1.25; % the factor to control how the z_window is narrowed each iteration, the larger, the smaller the z window over which new grid is generated
 options.disp_ref = 0;  % display refinement iterations
-rho_w   = rho_H2O(T,P,'ZD05');       % Water density
-eps_di  = eps_H2O(T,P,rho_w,'S14');  % Water dielectric constant
+[rho_w,eps_di]   = water_props(T2d(:),P2d(:),phs_name,'ZD05','S14');       % Water properties
 tic
 % Minimization refinement
-for iPT = 1:length(T2d(:))
+parfor iPT = 1:length(T2d(:))
     Nsys = Nsys0';
     Nsys(strcmp(Cname,'C')) = Nsys0(strcmp(Cname,'C')) + Cvar(iPT);
     Nsys(end-1) = n_oxy*Nsys(1:end-2);
-    [alph_all{iPT},Npc_all{iPT},pc_id_all{iPT},p_all{iPT}] = tl_minimizer(T2d(iPT),P2d(iPT),Nsys,phs_name,p,td,options,rho_w,eps_di);
+    [alph_all{iPT},Npc_all{iPT},pc_id_all{iPT},p_all{iPT}] = tl_minimizer(T2d(iPT),P2d(iPT),Nsys,phs_name,p,td,options,rho_w(iPT,:),eps_di(iPT,:));
     disp(iPT/length(T2d(:)))    
 end
 cpu = toc

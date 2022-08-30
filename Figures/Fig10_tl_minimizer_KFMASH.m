@@ -1,6 +1,6 @@
 clear,clf,addpath ../
 run_name = 'KFMASH_2022_03_06_10x11';
-T     = linspace(400,2000,10) + 273.15;
+T     = linspace(400,700,10) + 273.15;
 P     = linspace(0.1,1.5,11)*1e9;
 Cname = {'Si','Al'       ,'Fe'   ,'Mg', 'K',    'H','O'};
 noxy  = [2    3/2        1       1      1/2   1/2    ];

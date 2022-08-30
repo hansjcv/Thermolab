@@ -1,4 +1,4 @@
-clear,figure(2),clf,colormap jet,addpath ../
+clear,figure(2),clf,colormap jet,addpath ../,addpath ../Utilities/
 run_name = 'soapstone_2022_02_14_n1500_nz15_full';
 load(['linprog_run_' run_name]);
 options.eps_solvus = 10;
