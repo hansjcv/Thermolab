@@ -72,10 +72,11 @@ border          : 0px dashed black;
 margin          : 0;
 padding         : 5px;
 }
-#header ul li a{
-text-decoration : none;
-color           : blue;
-}
+    #header ul li a {
+        text-decoration: none;
+        color: blue;
+        font-size: small;
+    }
 #header ul li a:hover{
 color         :red;
 }
