@@ -45,9 +45,19 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     </p>
 
     <h2>Startup file</h2>
-    <p> To access Thermolab codes from anywhere on the drive it may be convenient to add the path where the Thermolab codes have been unzipped in a MATLAB startup.m file. This file should
-    then be stored somewhere in a MATLAB folder that is on the MATLAB path by default. In Windows this is usually the folder named MATLAB in 'Documents'. Alternatively the entire path to the Thermolab
-    files can be added in the beginning of each code that uses the MATLAB functions.</p>
+    <p>
+        To access Thermolab codes from anywhere on the drive it may be convenient to add the path where the Thermolab codes have been unzipped in a MATLAB startup.m file. The lines can
+        be appended to an already existing startup.m file or a startup.m file must be created and then be stored somewhere in a MATLAB folder that is on the MATLAB path by default.
+        In Windows this is usually the folder named MATLAB in 'Documents'. Alternatively the entire path to the Thermolab
+        files can be added in the beginning of each code that uses the MATLAB functions.
+    </p>
+    <p>
+        An example startup file is shown here in which two paths on the local S: drive of computer are added to the MATLAB path. An advantage of this method is that upon MATLAB restart the
+        paths are automatically added and no additional lines of code are needed in your own scripts.
+        <ul>
+            <li><a href="startup.html">startup.m</a></li>
+        </ul>
+    </p>
 </div>
 </body>
 </html>
