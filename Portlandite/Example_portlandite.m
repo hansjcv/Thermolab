@@ -15,11 +15,3 @@ b = 33.11e-3;
 c = -10.36e5;
 Cp_Thermoddem = a + b*T + c*T.^(-2);
 plot(T(2:end-1),Cp,'d',T,Cp_Thermoddem,'o-')
-
-
-% A = -284.929255;
-% B = -0.044711;
-% C = 21380.115459;
-% D = 104.204551;
-% E = -754249.169405;
-logKd_Thermoddem = A + B*T + C*T.^(-1) + D*log10(T) + E*T.^(-2);
