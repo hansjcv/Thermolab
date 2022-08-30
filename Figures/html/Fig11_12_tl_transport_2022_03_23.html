@@ -1,0 +1,228 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Fig11_12_tl_transport_2022_03_23</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-03-24"><meta name="DC.source" content="Fig11_12_tl_transport_2022_03_23.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clear,figure(1),clf,colormap(jet),addpath <span class="string">../</span>
+<span class="comment">% Physics</span>
+load <span class="string">lookup_soapstone_2022_02_14_n1500_nz15_full</span>
+mu_tab   =   mu_tab/max(abs(  mu_tab));
+rhos_tab = rhos_tab/max(abs(rhos_tab));
+rhof_tab = rhof_tab/max(abs(rhof_tab));
+<span class="comment">%independent</span>
+Lx     = 1;                                                               <span class="comment">% Length of model domain (m)</span>
+Dc     = 1;                                                               <span class="comment">% Diffusion coefficient (m^2/s)</span>
+P1     = 1;                                                               <span class="comment">% Boundary fluid pressure (Pa)</span>
+<span class="comment">%nondim</span>
+phi0   = 0.2;                                                             <span class="comment">% Background porosity (fluid volume fraction)</span>
+C0     = 0.004;                                                           <span class="comment">% Background CO2 concentration in solid (wt%)</span>
+C1     = 0.04715;                                                         <span class="comment">% Csolid soapstone</span>
+npow   = 3;                                                               <span class="comment">% Non-linearity in permeability-porosity relation</span>
+<span class="comment">%dependent</span>
+k_muf0 = 1*Dc/P1;                                                         <span class="comment">% Background permeability/fluid viscosity (m^2/(Pa*s))</span>
+t_tot  = 1e+1*Lx^2/Dc;                                                    <span class="comment">% Total time (s)</span>
+<span class="comment">% Numerics</span>
+nx     = 200;                                                             <span class="comment">% Number of grid points in x direction</span>
+nt     = 1e9;                                                             <span class="comment">% Number of time steps</span>
+niter  = 1e5;
+nout   = 10000;                                                           <span class="comment">% Maximum number of Pf iterations</span>
+tol    = 1e-6;                                                            <span class="comment">% Exit tolerance from Pf iterations</span>
+<span class="comment">% preprocessing</span>
+dx     = Lx/(nx-1);                                                       <span class="comment">% Grid step in x</span>
+x      = 0:dx:Lx;                                                         <span class="comment">% X-coordinates of the nodes</span>
+<span class="comment">% Initialisation;</span>
+phi    = x*0 + phi0;                                                      <span class="comment">% Initial porosity</span>
+Pf     = P1*(1-x/Lx);                                                     <span class="comment">% Initial fluid pressure</span>
+Cs     = x*0 + C0;                                                        <span class="comment">% Initial solid concentration</span>
+Cs(1)  = C1;                                                              <span class="comment">% Left solid CO2 concentration boundary</span>
+time   = 0;
+<span class="comment">% Processing</span>
+<span class="keyword">for</span> it = 1:nt   <span class="comment">% Time loop</span>
+    mu      = interp1(Cs_tab,mu_tab,Cs);                                  <span class="comment">% Local equilibrium mu CO2 in fluid from lookup table</span>
+    Cf      = interp1(Cs_tab,Cf_tab,Cs);                                  <span class="comment">% Local equilibrium CO2 in fluid from lookup table</span>
+    Cs_im   = interp1(Cs_tab,Mg_tab,Cs);                                  <span class="comment">% Local equilibrium Mg  in solid from lookup table</span>
+    rhos    = interp1(Cs_tab,rhos_tab,Cs);                                <span class="comment">% Local equilibrium density in solid from lookup table</span>
+    rhof    = interp1(Cs_tab,rhof_tab,Cs);                                <span class="comment">% Local equilibrium density in fluid from lookup table</span>
+    <span class="keyword">if</span> it == 1,phi_srho_sCs_im0 = (1 - phi).*rhos.*Cs_im;<span class="keyword">end</span>              <span class="comment">% Store initial values</span>
+    phi     = 1 - phi_srho_sCs_im0./(Cs_im.*rhos);                        <span class="comment">% mass balance of immobile species in solid (eq.7)</span>
+    Ctot    = Cf.*rhof.*phi + Cs.*rhos.*(1-phi);                          <span class="comment">% Shorthand notation (eq. 2)</span>
+    rhotot  =     rhof.*phi +     rhos.*(1-phi);                          <span class="comment">% Shorthand notation (eq. 6)</span>
+    <span class="keyword">if</span> it == 1,rhotot0         = rhotot;<span class="keyword">end</span>                               <span class="comment">% Store initial values</span>
+    drhotot = rhotot(2:end-1) - rhotot0(2:end-1);                         <span class="comment">% Shorthand notation</span>
+    <span class="comment">% averaging</span>
+    rhofc   = 0.5*(rhof(1:end-1)              + rhof(2:end)           );  <span class="comment">% rhof values between the nodes</span>
+    rhofCfc = 0.5*(rhof(1:end-1).*Cf(1:end-1) + rhof(2:end).*Cf(2:end));  <span class="comment">% rhof*Cf values between the nodes</span>
+    phic    = 0.5*( phi(1:end-1)              +  phi(2:end)           );  <span class="comment">% phi values between the nodes</span>
+    <span class="comment">% transport properties</span>
+    perm    = k_muf0*phic.^npow;                                          <span class="comment">% Permeability</span>
+    Deff    = Dc*rhofCfc.*phic;                                           <span class="comment">% Effective diffusivity</span>
+    <span class="comment">% Updates</span>
+    <span class="keyword">for</span> iter = 1:niter
+        dt_dif       = 0.45*dx^2/Dc;                                      <span class="comment">% maximum time step of diffusion</span>
+        dt_adv       = 0.45*dx/max(abs(rhofc.*perm.*diff(Pf)/dx));        <span class="comment">% maximum time step of advection</span>
+        dt           = min([dt_adv,dt_dif, t_tot-time]);                  <span class="comment">% maximum time step for numerical stability</span>
+        qD           = -perm.*diff(Pf)/dx;                                <span class="comment">% Darcy flux (eq. 3)</span>
+        Pres         = -drhotot/dt - diff(rhofc.*qD)/dx;                  <span class="comment">% Residual of the total mass balance (eq. 5)</span>
+        Pf(2:end-1)  = Pf(2:end-1) + dx^2/max(perm.*rhofc)/4*Pres;        <span class="comment">% Pf iterative update</span>
+        <span class="keyword">if</span> max(abs(Pres)) &lt; tol,<span class="keyword">break</span>,<span class="keyword">end</span>                                 <span class="comment">% Exit criteria from Pf iterations</span>
+    <span class="keyword">end</span>
+    iters(it)        = iter;                                              <span class="comment">% store for plotting</span>
+    qC               = -Deff.*diff(mu)/dx;                                <span class="comment">% Diffusion flux in fluid (first term in rhs eq. 3)</span>
+    Ctot(2:end-1)    = Ctot(2:end-1) - dt*(diff(qC + rhofCfc.*qD)/dx);    <span class="comment">% mass concentration balance of mobile species (eq.1)</span>
+    Cs               = (Ctot - rhof.*Cf.*phi)./rhos./(1-phi);             <span class="comment">% calculate new solid concentration (from eq. 2)</span>
+    time             = time + dt;
+    rhotot0          = rhotot;                                            <span class="comment">% for the next time step</span>
+    <span class="keyword">if</span> mod(it,nout)==1 || time == t_tot  <span class="comment">%Postprocessing                  % plot every nout time step</span>
+        phs_modes   = interp1(Cs_tab,vol_frac_solids,Cs);                 <span class="comment">% find local equilibrium stable phase volume fraction</span>
+        area(x,phs_modes,<span class="string">'FaceColor'</span>,<span class="string">'flat'</span>),axis <span class="string">tight</span>
+        legend(solid_names),title([mean(iters)/nx,iter/nx])
+        xlabel(<span class="string">'x'</span>)
+        drawnow
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> time &gt;= t_tot,<span class="keyword">break</span>,<span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear,figure(1),clf,colormap(jet),addpath ../
+% Physics
+load lookup_soapstone_2022_02_14_n1500_nz15_full
+mu_tab   =   mu_tab/max(abs(  mu_tab));
+rhos_tab = rhos_tab/max(abs(rhos_tab));
+rhof_tab = rhof_tab/max(abs(rhof_tab));
+%independent
+Lx     = 1;                                                               % Length of model domain (m)
+Dc     = 1;                                                               % Diffusion coefficient (m^2/s)
+P1     = 1;                                                               % Boundary fluid pressure (Pa)
+%nondim
+phi0   = 0.2;                                                             % Background porosity (fluid volume fraction)
+C0     = 0.004;                                                           % Background CO2 concentration in solid (wt%)
+C1     = 0.04715;                                                         % Csolid soapstone
+npow   = 3;                                                               % Non-linearity in permeability-porosity relation
+%dependent
+k_muf0 = 1*Dc/P1;                                                         % Background permeability/fluid viscosity (m^2/(Pa*s))
+t_tot  = 1e+1*Lx^2/Dc;                                                    % Total time (s)
+% Numerics
+nx     = 200;                                                             % Number of grid points in x direction
+nt     = 1e9;                                                             % Number of time steps
+niter  = 1e5;
+nout   = 10000;                                                           % Maximum number of Pf iterations
+tol    = 1e-6;                                                            % Exit tolerance from Pf iterations
+% preprocessing
+dx     = Lx/(nx-1);                                                       % Grid step in x
+x      = 0:dx:Lx;                                                         % X-coordinates of the nodes
+% Initialisation;
+phi    = x*0 + phi0;                                                      % Initial porosity
+Pf     = P1*(1-x/Lx);                                                     % Initial fluid pressure
+Cs     = x*0 + C0;                                                        % Initial solid concentration
+Cs(1)  = C1;                                                              % Left solid CO2 concentration boundary
+time   = 0;
+% Processing
+for it = 1:nt   % Time loop
+    mu      = interp1(Cs_tab,mu_tab,Cs);                                  % Local equilibrium mu CO2 in fluid from lookup table
+    Cf      = interp1(Cs_tab,Cf_tab,Cs);                                  % Local equilibrium CO2 in fluid from lookup table
+    Cs_im   = interp1(Cs_tab,Mg_tab,Cs);                                  % Local equilibrium Mg  in solid from lookup table
+    rhos    = interp1(Cs_tab,rhos_tab,Cs);                                % Local equilibrium density in solid from lookup table
+    rhof    = interp1(Cs_tab,rhof_tab,Cs);                                % Local equilibrium density in fluid from lookup table
+    if it == 1,phi_srho_sCs_im0 = (1 - phi).*rhos.*Cs_im;end              % Store initial values
+    phi     = 1 - phi_srho_sCs_im0./(Cs_im.*rhos);                        % mass balance of immobile species in solid (eq.7)
+    Ctot    = Cf.*rhof.*phi + Cs.*rhos.*(1-phi);                          % Shorthand notation (eq. 2)
+    rhotot  =     rhof.*phi +     rhos.*(1-phi);                          % Shorthand notation (eq. 6)
+    if it == 1,rhotot0         = rhotot;end                               % Store initial values
+    drhotot = rhotot(2:end-1) - rhotot0(2:end-1);                         % Shorthand notation
+    % averaging
+    rhofc   = 0.5*(rhof(1:end-1)              + rhof(2:end)           );  % rhof values between the nodes
+    rhofCfc = 0.5*(rhof(1:end-1).*Cf(1:end-1) + rhof(2:end).*Cf(2:end));  % rhof*Cf values between the nodes
+    phic    = 0.5*( phi(1:end-1)              +  phi(2:end)           );  % phi values between the nodes
+    % transport properties
+    perm    = k_muf0*phic.^npow;                                          % Permeability
+    Deff    = Dc*rhofCfc.*phic;                                           % Effective diffusivity    
+    % Updates
+    for iter = 1:niter        
+        dt_dif       = 0.45*dx^2/Dc;                                      % maximum time step of diffusion
+        dt_adv       = 0.45*dx/max(abs(rhofc.*perm.*diff(Pf)/dx));        % maximum time step of advection
+        dt           = min([dt_adv,dt_dif, t_tot-time]);                  % maximum time step for numerical stability        
+        qD           = -perm.*diff(Pf)/dx;                                % Darcy flux (eq. 3)
+        Pres         = -drhotot/dt - diff(rhofc.*qD)/dx;                  % Residual of the total mass balance (eq. 5)
+        Pf(2:end-1)  = Pf(2:end-1) + dx^2/max(perm.*rhofc)/4*Pres;        % Pf iterative update
+        if max(abs(Pres)) < tol,break,end                                 % Exit criteria from Pf iterations
+    end
+    iters(it)        = iter;                                              % store for plotting
+    qC               = -Deff.*diff(mu)/dx;                                % Diffusion flux in fluid (first term in rhs eq. 3)
+    Ctot(2:end-1)    = Ctot(2:end-1) - dt*(diff(qC + rhofCfc.*qD)/dx);    % mass concentration balance of mobile species (eq.1)
+    Cs               = (Ctot - rhof.*Cf.*phi)./rhos./(1-phi);             % calculate new solid concentration (from eq. 2)
+    time             = time + dt;
+    rhotot0          = rhotot;                                            % for the next time step
+    if mod(it,nout)==1 || time == t_tot  %Postprocessing                  % plot every nout time step
+        phs_modes   = interp1(Cs_tab,vol_frac_solids,Cs);                 % find local equilibrium stable phase volume fraction        
+        area(x,phs_modes,'FaceColor','flat'),axis tight
+        legend(solid_names),title([mean(iters)/nx,iter/nx])        
+        xlabel('x')
+        drawnow
+    end
+    if time >= t_tot,break,end
+end
+##### SOURCE END #####
+--></body></html>
