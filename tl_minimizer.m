@@ -10,6 +10,7 @@ if ~exist('options','var')
     options.dz_fact  = ones(size(phs_name))*1.5; % the factor to determine new dz spacing, the larger, the more pseudocompounds
     options.ref_fact = 1.25; % the factor to control how the z_window is narrowed each iteration, the larger, the smaller the z window over which new grid is generated
     options.disp_ref = 0; % show refinement graphically
+    options.solver   = 0;
 end
 nref = options.nref;eps_dg = options.eps_dg;dz_tol=options.dz_tol;z_window = options.z_window; dz_fact = options.dz_fact; ref_fact = options.ref_fact; disp_ref = options.disp_ref;
 % Minimization refinement
@@ -21,8 +22,16 @@ td_ini  = td;
 gmin_old = 1e10;
 for i_ref = 1:nref       
     [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di);
-    LB            = zeros(1,size(g,1));
-    [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display','off'));    
+    LB            = zeros(1,size(g,1));    
+    if options.solver == 1
+        Npc(Npc<1e-12)      =  0;  % Remove small number to avoid glpk instability
+        [alph,gmin]  =  glpk(g,Npc,Nsys,LB,[],repmat('S',1,size(Npc,1)));     
+        if ~isempty(alph),exitflag(i_ref)=1;end;
+    elseif options.solver == 2
+        [alph,gmin,exitflag(i_ref)] = opti_clp([],g,Npc,Nsys,Nsys,LB);    
+    else
+        [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display','off'));    
+    end    
     if exitflag(i_ref) ~= 1,break,end
     gmin_ref(i_ref) = gmin;alph_iref{i_ref} = alph;p_iref{i_ref} = p; Nphs_iref{i_ref} = Npc; psc_id_iref{i_ref} = pc_id; g_iref{i_ref} = g;    
     dg_it  = 1e8;
