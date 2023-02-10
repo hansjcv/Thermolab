@@ -1,6 +1,6 @@
-clear,clf,addpath ../
+clear,clf
 % Fig6c
-T = linspace(400,750,20) + 273.15;
+T = linspace(400,950,20) + 273.15;
 P = linspace(1,15,21)*1e8;            
 Cname = {'Si','Al'       ,'Fe'   ,'Mg', 'K',    'H','O'};
 noxy  = [2    3/2        1       1      1/2   1/2    ];
@@ -8,12 +8,12 @@ Nsys  = [68   2*12.488   10.529  4.761  2*3.819  2*50];Nsys = [Nsys Nsys*noxy'];
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
 % phs_name = {'Chlorite','Garnet','Biotite','Muscovite','Staurolite','Feldspar(C1)','Chloritoid','Cordierite','and,tc-ds55','sill,tc-ds55','ky,tc-ds55','H2O,tc-ds55','q,tc-ds55'};
 % td         = init_thermo(phs_name,Cname,'solution_models_KFMASH');
-phs_name = {'Chlorite','Garnet','Biotite','Muscovite','Staurolite','Feldspar(C1)','Chloritoid','Cordierite','and,tc-ds633','sill,tc-ds633','ky,tc-ds633','H2O,tc-ds633','q,tc-ds633'};
+phs_name = {'Melt(H18)','Chlorite','Garnet','Biotite','Muscovite','Staurolite','Feldspar(C1)','Chloritoid','Cordierite','and,tc-ds633','sill,tc-ds633','ky,tc-ds633','H2O,tc-ds633','q,tc-ds633'};
 td         = init_thermo(phs_name,Cname,'solution_models_H18');
 [T2d,P2d] = ndgrid(T,P); 
 [g,Nphs,psc_id,p] = tl_gibbs_energy(T2d(:),P2d(:),phs_name,td); % compute Gibbs energy for all possible phases
 LB  = zeros(1,size(g,1)); % do not look for alph below zero, because stable phase amount cannot be negative.
-for iTX = 1:length(T2d(:))
+parfor iTX = 1:length(T2d(:))
     alph{iTX} = linprog(g(:,iTX),[],[],Nphs,Nsys',LB); % The Gibbs energy minimization           
     disp(iTX/length(T2d(:)))
 end

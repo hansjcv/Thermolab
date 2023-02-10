@@ -1,4 +1,4 @@
-clear,clf
+clear,clf,addpath ../ ../Utilities/ ../Solutions/
 run_name = 'K32_2023_01_26_PTpath';
 T        = linspace(600,850,20) + 273.15; % Temperature
 dPdT     =  2e9/200;

@@ -15,8 +15,8 @@ if dgex == 1
     G_land  = Smax.*((T-Tc).*Q.^2 + (1/3).*Tc.*Q.^6);
     dG      = (h_298 - T.*s_298 + intvdP + G_land.*logical(T<=Tc))*1e3;
 elseif dgex == 2
-    eos   = 2;    
-    vterm = intVdP(T,P,td,eos)*1e-3;  % inconsequently, the vterm=VdP is used here again. fix later by splitting excess VdP from excess SdT
+%     eos   = 2;    
+%     vterm = intVdP(T,P,td,eos)*1e-3;  % inconsequently, the vterm=VdP is used here again. fix later by splitting excess VdP from excess SdT
     Tr = 25 + 273.15; P = P/1e8;    
     %% Load data
     Tc0  = td(12);Smax = td(13);Vmax   = td(14);
@@ -28,10 +28,11 @@ elseif dgex == 2
         tcp       = Tc0 + P.*(Vmax./Smax);
         temp_q2   = sqrt((tcp-T)./Tc0);
         q2(T<tcp) = temp_q2(T<tcp);
-        s_exc     = Smax.*(q20-q2);
-        h_exc     = Smax.*(Tc0.*(q20-q20.*(q20.^2)/3 + q2.*(q2.^2)/3) - tcp.*q2);
-        h_exc     = h_exc + Vmax.*q20.*vterm;
-        g_exc     = h_exc - T.*s_exc;
+        g_exc     = Smax.*(Tc0.*(q20.*(1 - 1/3.*q20.^2) + 1/3*q2.^3) - q2.*tcp) - T.*Smax.*(q20 - q2) + P.*Vmax.*q20;
+%         s_exc     = Smax.*(q20-q2);
+%         h_exc     = Smax.*(Tc0.*(q20-q20.*(q20.^2)/3 + q2.*(q2.^2)/3) - tcp.*q2);
+%         h_exc     = h_exc + Vmax.*q20.*vterm;
+%         g_exc     = h_exc - T.*s_exc;
         if od == 1 % in case of disordered endmember
             g_exc     = Tc0.*Smax.*(-2/3 + q20.*(1 - q20.^2/3)) - Tc0.*Smax.*(q20 - 1) + P.*Vmax.*(q20 - 1);
         elseif od == 2

@@ -3,6 +3,7 @@ clear,clf,addpath ../
 T     = 1000+ 273.15;     % Temperature (K)
 P     = 0.1e9;            % Pressure    (Pa)
 phase = {'q,tc-ds55','per,tc-ds55','en,tc-ds55','fo,tc-ds55'};  % Phase name
+% phase = {'q,tc-ds633','per,tc-ds633','en,tc-ds633','fo,tc-ds633'};  % Phase name
 g     = tl_gibbs_energy(T,P,phase);
 Nsys = [1.2  % Si in system
         2.0  % Mg in system

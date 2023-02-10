@@ -1,4 +1,4 @@
-clear,addpath ..\
+clear,addpath ..\,addpath ..\Solutions
 run_name = 'soapstone_2022_02_14_n1500_nz15_full';
 T = 300 + 273.15;
 P = 3e8;
@@ -21,6 +21,7 @@ options.z_window = ones(size(phs_name))*0.2; % the window over which the refined
 options.dz_fact  = ones(size(phs_name))*3; % the factor to determine new dz spacing, the larger, the more pseudocompounds
 options.ref_fact = 1.5; % the factor to control how the z_window is narrowed each iteration, the larger, the smaller the z window over which new grid is generated
 options.disp_ref = 0;  % display refinement iterations
+options.solver = 0;  % which solver to use if installed
 [rho_w,eps_di]   = water_props(T2d(:),P2d(:),phs_name,'ZD05','S14');       % Water properties
 tic
 % Minimization refinement

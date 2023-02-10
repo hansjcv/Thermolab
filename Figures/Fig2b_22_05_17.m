@@ -1,4 +1,4 @@
-clear,clf,addpath ../
+clear,clf,addpath ../ ../Utilities/ ../Solutions/
 T  = (100:10:1000) + 273.15;
 P  = [5, 10, 15, 20]*1e8;
 linesym  = {'-b','-r','-g','-c'};

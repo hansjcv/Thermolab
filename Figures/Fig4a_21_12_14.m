@@ -4,7 +4,8 @@ T = linspace(400,750,20) + 273.15;
 P = linspace(0.1,1,21)*1e9;  
 X = {'Si','Al','O'};
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
-phases  = {'and,tc-ds55','sill,tc-ds55','ky,tc-ds55'};
+% phases  = {'and,tc-ds55','sill,tc-ds55','ky,tc-ds55'};
+phases  = {'and,tc-ds633','sill,tc-ds633','ky,tc-ds633'};
 [T2d,P2d] = ndgrid(T,P); % (technical note: created 2D versions of T and P vector )
 [g,Nphs] = tl_gibbs_energy(T2d(:),P2d(:),phases); % compute Gibbs energy for all possible phases
 Nsys = Nphs(:,1);

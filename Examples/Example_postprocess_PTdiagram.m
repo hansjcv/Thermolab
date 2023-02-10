@@ -3,7 +3,7 @@ runname = 'K32_2023_01_26_H18';
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm = molmass_fun(Cname);
 solv_tol = 2;
-fluid = 'H2O,tc-ds55';
+fluid = 'Fluid-H2O';
 phs_modes = zeros(length(T2d(:)),length(phs_name));
 for iPT = 1:length(T2d(:))    
     [pc_id,phi,Cwt,Npc,rho,mu,p_out,phiw,mu2] = postprocess_fun(T2d(iPT),P2d(iPT),td,alph_all{iPT},Npc_all{iPT},molm,p_ref{iPT},pc_id_ref{iPT},phs_name,solv_tol,'CORK','S14');

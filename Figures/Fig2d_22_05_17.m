@@ -1,4 +1,4 @@
-clear,figure(1),clf,colormap jet,addpath ../
+clear,figure(1),clf,colormap jet,addpath ../ ../Utilities/ ../Solutions/
 T   = 25+273.15;
 P   = 1e5;
 X = {'Si','Al','K','H','O','e'};
@@ -50,7 +50,7 @@ for i = 1:size(asm_id,1)
 end
 % Plot phase diagram section
 figure(1)
-tl_psection(log10(x),log10(1./y),X,asm_id,phases,[0*1e10,0*1e10],8)
+tl_psection(log10(x),log10(1./y),X,asm_id,phases,0,[0,0],8)
 xlabel('log(H_4SiO_4)'),ylabel('(log(K+)');
 title('Activity diagram');
 axis square

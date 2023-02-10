@@ -6,7 +6,7 @@ if eos==4
     VdP = VdP*1e3;
 elseif eos == 5
     fl = td(25);
-    [VdP,V] = HP_CORK(T,P,fl);
+    [VdP,V] = intVdP_PS94(unique(T),unique(P),fl);
     VdP = VdP*1e3;
 elseif eos == 1
     Tr = 25 + 273.15;
@@ -27,7 +27,8 @@ elseif eos == 2
     k0     = td(9);k0p    = td(10);k0pp = td(11);
     dk0dt = td(22); sum_nphs = td(23); isL = td(24);dqf = td(27);
     %% TEOS (see Holland and Powell 2011)
-    theta = 10636/((Sref*1e3)/sum_nphs + 6.44);
+    theta =  10636/((Sref*1e3)/sum_nphs + 6.44);
+%     theta = round(10636/((Sref*1e3)/sum_nphs + 6.44)); makes better fit to tc347
     u     = theta./T;
     u0    = theta./Tr;
     ksi0  = (u0.^2.*exp(u0))./((exp(u0)-1).^2);
@@ -143,6 +144,37 @@ else
     V   = 0;
     VdP = 0;
 end
+end
+function [intVdP,V] = intVdP_PS94(T,P,fluid_id)
+% Simple interpolation on Pitzer and Sterner (1994) EOS, Not applicable for H2O in the critical region.
+% if min(P) < 0.3 && min(T) < 674.3 && fluid_id==1 
+%     error('EOS not applicable in this P-T range')
+% end
+if fluid_id == 1
+    Mw = 18.01528;
+else
+    Mw = 44.01;
+end
+n          = 1e5;
+rho_tab    = logspace(-5,log10(2.6),n)/Mw;
+P_i        = logspace(-3,log10(max(P))+0.01,n);
+intVdP_i   = zeros(1,length(P_i    ));
+rho        = zeros(length(T),length(P      ));
+V          = zeros(length(T),length(P      ));
+intVdP     = zeros(length(T),length(P      ));
+for iT = 1:length(T)
+    [~,P_tab] = EOS_PS94_original(rho_tab,T(iT),fluid_id);
+    rho_i     = interp1(P_tab/1e3,rho_tab,P_i);
+    V_i       = 1./rho_i;
+    for j = 2:length(P_i)
+        intVdP_i(j) = intVdP_i(j-1) + 1e-1*V_i(j)*(P_i(j)-P_i(j-1)); % Integrate G at constant T
+    end    
+    rho(iT,:)    = interp1(P_i,   rho_i,P);
+    V(iT,:)      = interp1(P_i,     V_i,P);
+    intVdP(iT,:) = interp1(P_i,intVdP_i,P);
+end
+intVdP = intVdP(:);
+V      = V(:);
 end
 function [int_VdP,V] = HP_CORK(Tarr,Parr,i_fl)
 % CORK Equation of state and VdP from HP 1991 with Virial terms from HP 1998
@@ -274,4 +306,55 @@ for i = 1:length(sol)
     end
 end
 Vmrk = sol(logical(ind));
+end
+function [P_RT,Pbar,A_nRT,lnf] = EOS_PS94_original(r,T,phs_id)
+if phs_id ==1
+    C = [
+        0               0              0.24657688e+6  0.51359951e+2  0              0;             %1
+        0               0              0.58638965e+0 -0.28646939e-2  0.31375577e-4  0;             %2
+        0               0             -0.62783840e+1  0.14791599e-1  0.35779579e-3  0.15432925e-7; %3
+        0               0              0             -0.42719875e+0 -0.16325155e-4  0;             %4
+        0               0              0.56654978e+4 -0.16580167e+2  0.76560762e-1  0;             %5
+        0               0              0              0.10917883e+0  0              0;             %6
+        0.38878656e+13 -0.13494878e+9  0.30916564e+6  0.75591105e+1  0              0;             %7
+        0               0             -0.65537898e+5  0.18810675e+3  0              0;             %8
+        -0.14182435e+14  0.18165390e+9 -0.19769068e+6 -0.23530318e+2  0              0;             %9
+        0               0              0.92093375e+5  0.12246777e+3  0              0];            %10
+elseif phs_id == 2
+    C = [
+        0               0              0.18261340e+7   0.79224365e+2  0              0            ; %1
+        0               0              0               0.66560660e-4  0.57152798e-5  0.30222363e-9; %2
+        0               0              0               0.59957845e-2  0.71669631e-4 0.62416103e-8; %3
+        0               0              -0.13270279e+1 -0.15210731e+0  0.53654244e-3  -0.71115142e-7; %4
+        0               0              0.12456776e+0   0.49045367e+1  0.98220560e-2  0.55962121e-5;  %5
+        0               0              0               0.75522299e+0  0              0;             %6
+        -0.39344644e+12 0.90918237e+8  0.42776716e+6  -0.22347856e+2  0              0;             %7
+        0               0              0.40282608e+3   0.11971627e+3  0              0;             %8
+        0               0.22995650e+8 -0.78971817e+5  -0.63376456e+2  0              0;             %9
+        0               0              0.95029765e+5   0.18038071e+2  0              0];            %10
+end
+% calculation of coefficients Pitzer & Sterner (1994)
+c1  = C(1,1)*T^(-4)  + C(1,2)*T^(-2)  + C(1,3)*T^(-1)  + C(1,4)  + C(1,5)*T  + C(1,6)*T^2;
+c2  = C(2,1)*T^(-4)  + C(2,2)*T^(-2)  + C(2,3)*T^(-1)  + C(2,4)  + C(2,5)*T  + C(2,6)*T^2;
+c3  = C(3,1)*T^(-4)  + C(3,2)*T^(-2)  + C(3,3)*T^(-1)  + C(3,4)  + C(3,5)*T  + C(3,6)*T^2;
+c4  = C(4,1)*T^(-4)  + C(4,2)*T^(-2)  + C(4,3)*T^(-1)  + C(4,4)  + C(4,5)*T  + C(4,6)*T^2;
+c5  = C(5,1)*T^(-4)  + C(5,2)*T^(-2)  + C(5,3)*T^(-1)  + C(5,4)  + C(5,5)*T  + C(5,6)*T^2;
+c6  = C(6,1)*T^(-4)  + C(6,2)*T^(-2)  + C(6,3)*T^(-1)  + C(6,4)  + C(6,5)*T  + C(6,6)*T^2;
+c7  = C(7,1)*T^(-4)  + C(7,2)*T^(-2)  + C(7,3)*T^(-1)  + C(7,4)  + C(7,5)*T  + C(7,6)*T^2;
+c8  = C(8,1)*T^(-4)  + C(8,2)*T^(-2)  + C(8,3)*T^(-1)  + C(8,4)  + C(8,5)*T  + C(8,6)*T^2;
+c9  = C(9,1)*T^(-4)  + C(9,2)*T^(-2)  + C(9,3)*T^(-1)  + C(9,4)  + C(9,5)*T  + C(9,6)*T^2;
+c10 = C(10,1)*T^(-4) + C(10,2)*T^(-2) + C(10,3)*T^(-1) + C(10,4) + C(10,5)*T + C(10,6)*T^2;
+
+% ------------------------------------------------------------------------
+P_RT =  r + c1*r.^2 - r.^2.*((c3 + 2*c4*r + 3*c5*r.^2 + 4*c6*r.^3)./...
+    (c2 + c3*r + c4*r.^2 + c5*r.^3 + c6*r.^4).^2) ...
+    + c7*r.^2.*exp(-c8.*r) + c9*r.^2.*exp(-c10*r);
+Pbar = P_RT*8.3144*T*1e6/1e5;
+
+A_nRT = log(r) + c1.*r + ...
+    (1./(c2 + c3.*r +c4.*r.^2 + c5.*r.^3 + c6.*r.^4) ...
+    - 1./c2 ) - (c7./c8).*(exp(-c8.*r)-1) - (c9./c10) ...
+    .* (exp(-c10.*r)-1);
+
+lnf = log(r) + A_nRT + P_RT./r + log(8.3144*T) -1;
 end

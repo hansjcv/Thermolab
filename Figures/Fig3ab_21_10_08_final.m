@@ -2,7 +2,8 @@ clear,close all,colormap(jet),addpath ../
 % Input
 T          = linspace(300,800,200)+ 273.15;                % Temperature (K)
 P          = linspace(0.1e9,1e9,200);                      % Pressure (Pa)
-phase      = {'ky,tc-ds55','sill,tc-ds55','and,tc-ds55'};  % Phase name
+% phase      = {'ky,tc-ds55','sill,tc-ds55','and,tc-ds55'};  % Phase name
+phase      = {'ky,tc-ds633','sill,tc-ds633','and,tc-ds633'};  % Phase name
 % Numerics
 [T2d,P2d]  = ndgrid(T,P);                                  % Create P-T grid
 % Gibbs energy function

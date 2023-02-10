@@ -1,4 +1,4 @@
-function [g,Npc,pc_id,p,z,g_id] = tl_gibbs_energy(T,P,phase,td,p,g0,v0,rho_w,eps_di)
+function [g,Npc,pc_id,p,z,g_id,g_nid] = tl_gibbs_energy(T,P,phase,td,p,g0,v0,rho_w,eps_di)
 %% tl_gibbs_energy Thermolab Gibbs energy.
 %   g = tl_gibbs_energy(T,P,phase) gives the Gibbs energy of an endmember
 %   at T in Kelvin and P in Pascal. Gibbs energies for multiple P-T points

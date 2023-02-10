@@ -1,4 +1,4 @@
-clear
+clear,clf,addpath ../ ../Utilities/ ../Solutions/
 runname = 'K32_2023_01_26_PTpath';
 load(['linprog_run_' runname]);                                          % load linprog run data
 solv_tol = 1;
