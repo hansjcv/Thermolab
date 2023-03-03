@@ -6,8 +6,8 @@ delP     = 1e5;                                                          % for n
 % Cluster analysis to find exsolved phases
 [alph,Npc,p_out,pc_id] = cluster_p(alph,Npc,p,pc_id,solv_tol,phases);    % Compute exsolved, or numerically equivalent phases 
 % For numerical derivatives
-[rho_w,eps_w] = water_props(T,P+delP,phases,feos,eps_model);     % Calculate density of water
-[rho_w_dP,eps_w_dP] = water_props(T,P,phases,feos,eps_model);     % Calculate density of water
+[rho_w_dP,eps_w_dP] = water_props(T,P+delP,phases,feos,eps_model);     % Calculate density of water
+[rho_w,eps_w]       = water_props(T,P,phases,feos,eps_model);     % Calculate density of water
 [g0,v0]       = tl_g0(T,P,td,rho_w,eps_w); % Calculate endmember Gibbs energies of each solution
 [g0_dP,v0_dP] = tl_g0(T,P+delP,td,rho_w_dP,eps_w_dP);% Calculate endmember Gibbs energies of each solution at dP
 g             = tl_gibbs_energy(T,P     ,phases,td,p_out,g0,v0,rho_w,eps_w);            % get Gibbs energy at P
