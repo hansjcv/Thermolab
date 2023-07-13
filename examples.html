@@ -31,11 +31,14 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 
 <div id="maincontent">
     <h1>Example 1</h1>
-  
-
     <p>
         <a href="Example_01.m"> <img src="Example_1.PNG" alt="Code" width="100%" /></a>
     </p>
+  <p>Line 1 clears the Matlab memory and adds the folder one level up in the folder structure to the MATLAB path. It can also be a complete path to the folder in which the main Thermolab functions are stored.</p>
+  <p>Line 2 defines the temperature in Kelvin</p>
+  <p>Line 3 defines the pressure in Pascal</p>
+  <p>Line 4 specifies the phase for which the Gibbs energy will be calculated. It uses the abbreviation of the phase in a thermodynamic dataset and the abbreviation for the dataset from which this phase is taken. Here it is the tc-ds55 dataset from Thermocalc. Abbreviations of the phase follow the naming by the authors of the dataset</p>
+  <p>Line 5 is the call to the Gibbs energy function (tl for Thermolab), and here takes the temperature, pressure and phase abbreviation as the minimum input parameters. The output will be Gibbs energy in Joule per mole of phase</p>
 </div>
 </body>
 </html>
