@@ -32,19 +32,39 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 <div id="maincontent">
     <h1>Example 1</h1>
     <p>
-        <a href="Example_01.m"> <img src="Example_1.PNG" alt="Code" width="100%" /></a>
+        <a href="Example_01.m"> <img src="Example_1.PNG" alt="Code" width="100%" style="border:1px solid #ff0000"/></a>
     </p>
     <p>Line 1 clears the Matlab memory and adds a folder to the MATLAB path. In this case the relative path: one level up in the folder structure. It can also be a complete path to the folder in which the main Thermolab functions are stored.</p>
     <p>Line 2 defines the temperature in Kelvin</p>
     <p>Line 3 defines the pressure in Pascal</p>
     <p>Line 4 specifies the phase for which the Gibbs energy will be calculated. It uses the abbreviation of the phase in a thermodynamic dataset and the abbreviation for the dataset from which this phase is taken. Here it is the tc-ds633 dataset from <a href="https://hpxeosandthermocalc.org/" target="_blank"> THERMOCALC </a> (Holland and Powell, 2011). Abbreviations of the phase follow the naming by the authors of the dataset</p>
     <p>Line 5 is the call to the Gibbs energy function (tl for Thermolab), and here takes the temperature, pressure and phase abbreviation as the minimum input parameters. The output will be Gibbs energy in Joule per mole of phase</p>
+
+    <h1>Example 2</h1>
+    <p>
+        <a href="Example_02.m"> <img src="Example_2.PNG" alt="Code" width="100%" style="border:1px solid #ff0000"/></a>
+    </p>
+
+    <p>
+        A small modification of Example 1 to calculate Gibbs energy of multiple phases for a list of temperatures (T) pressures (P).
+    </p>
+    <ul>
+        <li> Line 2: Creates list of 30 linearly spaced temperatures from 300 to 1000 &deg;C. </li>
+        <li> Line 3: Similar to Line 2, for pressures from 0.1 to 4 GPa. </li>
+        <li> Line 4: Add more phases to the list separated by comma's.   </li>
+        <li> Line 5: Creates grid of P-T points (this is similar to looping over domain of discrete P-T points, see loop version <a href="Example_02_loop.m"> here</a>.) </li>
+        <li> Line 6: T and P are input into tl_gibbs_energy as two vectors of P-T coordinates. </li>
+    </ul>
+    <p>
+        Exercise: Plot coesite-quartz reaction. Add other SiO<sub>2</sub> polymorphs.
+    </p>
     <h1>References</h1>
+
     <div id="biblio">
         <ul>
-            <li><a href="https://doi.org/10.1111/j.1525-1314.2010.00923.x">An improved and extended internally consistent thermodynamic dataset for phases of petrological interest, involving a new equation of state for solids</a></li>
+            <li class="title">An improved and extended internally consistent thermodynamic dataset for phases of petrological interest, involving a new equation of state for solids</li>
             <li class="author_date">Holland, T. J. B. and Powell, R. (2011)</li>
-            <li class="journal">Journal of Metamorphic Geology, <b>29</b>, 3, p. 333-383 https://doi.org/10.1111/j.1525-1314.2010.00923.x</li>
+            <li class="journal">Journal of Metamorphic Geology,<b>29</b>, 3, p. 333-383, <a href="https://doi.org/10.1111/j.1525-1314.2010.00923.x" target="_blank"> https://doi.org/10.1111/j.1525-1314.2010.00923.x</a></li>
         </ul>
     </div>
 </div>
