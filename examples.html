@@ -32,7 +32,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 <div id="maincontent">
     <h1>Example 1</h1>
     <p>
-        <a href="Example_01.m"> <img src="Example_1.PNG" alt="Code" width="100%" style="border:1px solid #ff0000"/></a>
+        <a href="Example_01.m"> <img src="Example_1.PNG" alt="Code" width="100%" style="border:1px solid #ff0000" /></a>
     </p>
     <p>Line 1 clears the Matlab memory and adds a folder to the MATLAB path. In this case the relative path: one level up in the folder structure. It can also be a complete path to the folder in which the main Thermolab functions are stored.</p>
     <p>Line 2 defines the temperature in Kelvin.</p>
@@ -42,7 +42,7 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 
     <h1>Example 2</h1>
     <p>
-        <a href="Example_02.m"> <img src="Example_2.PNG" alt="Code" width="100%" style="border:1px solid #ff0000"/></a>
+        <a href="Example_02.m"> <img src="Example_2.PNG" alt="Code" width="100%" style="border:1px solid #ff0000" /></a>
     </p>
 
     <p>
@@ -58,6 +58,21 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     <p>
         Exercise: Plot coesite-quartz reaction. Add other SiO<sub>2</sub> polymorphs.
     </p>
+
+    <h1>Example 3</h1>
+    <p>
+        <a href="Example_03.m"> <img src="Example_3.PNG" alt="Code" width="100%" style="border:1px solid #ff0000" /></a>
+    </p>
+
+    <p>
+        Calculate Gibbs energy of multiple phases including solid solutions for a list of temperatures (T) pressures (P).
+    </p>
+    <ul>        
+        <li> Line 4: Add more phases to the list separated by comma's. Minerals that form a solid solution use naming as defined in the sheetnames of the solution model Excel file.</li>
+        <li> Line 5: Select components in the system using the symbols of the periodic table of elements</li>
+        <li> Line 6: Initialize thermodynamic data. This function creates a MATLAB structure array "td" which contains all static information of thermodynamic data for each phase in the list. The third input parameter into this function is the name of the Excel file that holds the solution model file. To find which solution models are available, open this Excel file and look for the names of the Excel sheets.</li>
+        <li> Line 8: Calculate Gibbs energy using additional input variable "td". Multiple output variables can be obtained from the function: the gibbs energy, the composition of the discrete phase compounds of the solid solutions and an identifier of each discrete phase compound in the list. The indexing follows the order of the phases in the list in line 4. For example, if there are 15 discrete compositions of Olivine produced, then there will be 15 Olivine Gibbs energies (for each P-T), and the pc_id list will start with 15 '1's, followed by the Orthopyroxene phase compounds etc.</li>
+    </ul>    
     <h1>References</h1>
 
     <div id="biblio">
