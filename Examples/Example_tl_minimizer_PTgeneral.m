@@ -1,4 +1,4 @@
-clear,clf,addpath ../ ../Utilities/ ../Solutions/
+clear,clf,addpath ../ ../Utilities/ ../Solutions/ ../EOS
 run_name = 'K32_2023_01_26_H18';
 T      = linspace(400,900,10) + 273.15;
 P      = linspace(0.1,2.0,11)*1e9;
@@ -7,10 +7,8 @@ dz     = 1/4;
 ngrid    = 1; % number of P-T grid refinements, each time, the P-T grid resolution is doubled.
 eps_solv = 2;
 Cname  = {'Si' ,'Al' , 'Cr',    'Ti'     ,'Fe'   ,'Mn',    'Mg',    'Ca',   'Na',    'K',    'H','O'  };
-% wtOx   = [54.11  25.29  0        0.92   8.98    0*0.1     1.74    0.86     2.1    2.26     50];
-% Oxname = {'SiO2','Al2O3','Cr2O3','TiO2',  'FeO'  ,'MnO', 'MgO',  'CaO',  'Na2O', 'K2O',  'H2O'};
+Oxname = {'SiO2','Al2O3','Cr2O3','TiO2',  'FeO'  ,'MnO', 'MgO',  'CaO',  'Na2O', 'K2O',  'H2O'};
 wtOx   = [60.04  15.91  0        0.77     8.36     0.11   4.81    4.14    2.34    2.33     1.77];
-% wtOx   = [40.73  2.52   0        0        7.65       0      36.07    2.7     0        0       50];
 noxy   = [2      3      3        2        1       1         1        1       1        1       1       ];
 ncat   = [1      2      2        1        1       1         1        1       2        2       2       ];
 molmOx = [60.084  101.961 151.9904 79.8658  71.844  70.93744  40.304  56.077 61.97894 94.196  18.01528];

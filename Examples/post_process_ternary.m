@@ -1,4 +1,4 @@
-clear,clf,addpath ..\ ..\Solutions\ ..\Utilities\
+clear,clf,addpath ..\ ..\Solutions\ ..\Utilities\ ..\EOS
 run_name = 'ternary_example_Tpz';
 load(['linprog_run_' run_name]);       
 molm      = molmass_fun(Cname);
