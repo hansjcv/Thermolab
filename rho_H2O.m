@@ -1,4 +1,7 @@
 function rho_w = rho_H2O(T,P,EOS)
+if nargin < 4
+    td = [];
+end
 P     = P/1e8;
 rho_w = zeros(length(T),1);
 switch EOS
@@ -7,19 +10,6 @@ switch EOS
         rho_g1 = 500;
         rho_g2 = 1000;
         rho_g3 = 1600;
-%         for i = 1:length(T)
-%             for j = 1:length(P)
-%                 if P(j)<2
-%                     if T(i) > 573.15
-%                         rho_w(i,j) = fzero(@(rho) EOS_JN91(rho,T(i))-P(j),rho_g1); % T in K , P in kb
-%                     else
-%                         rho_w(i,j) = fzero(@(rho) EOS_JN91(rho,T(i))-P(j),rho_g2); % T in K , P in kb
-%                     end
-%                 else
-%                     rho_w(i,j) = fzero(@(rho) EOS_JN91(rho,T(i))-P(j),rho_g3); % T in K , P in kb
-%                 end
-%             end            
-%         end
         for i = 1:length(T)            
             if P(i)<2
                 if T(i) > 573.15
@@ -36,19 +26,6 @@ switch EOS
         rho_g1 = 800;
         rho_g2 = 1100;
         rho_g3 = 1600;
-%         for i = 1:length(T)
-%             for j = 1:length(P)
-%                 if P(j)<2
-%                     if T(i) > 573.15
-%                         rho_w(i,j) = fzero(@(rho) rho_IAPWS(rho,T(i),P(j)*1e2),rho_g1); % T in K , P in MPa
-%                     else
-%                         rho_w(i,j) = fzero(@(rho) rho_IAPWS(rho,T(i),P(j)*1e2),rho_g2); % T in K , P in MPa
-%                     end
-%                 else
-%                     rho_w(i,j) = fzero(@(rho) rho_IAPWS(rho,T(i),P(j)*1e2),rho_g3); % T in K , P in MPa
-%                 end
-%             end
-%         end
         for i = 1:length(T)           
             if P(i)<2
                 if T(i) > 573.15
@@ -64,20 +41,6 @@ switch EOS
         %% Zhang and Duan 2009 EOS
         rho_g1 = 1800;
         rho_g2 = 1000;
-%         for i = 1:length(T)
-%             for j = 1:length(P)
-%                 if T(i) > 573.15
-%                     rho_w(i,j) = fzero(@(rho) rho_ZD09(rho,T(i),P(j)),rho_g1); % T in K , P in kbar
-%                 else
-%                     warning('Out of calibration range for Zhang and Duan EOS, switching to IAPWS');
-%                     if P(j)<2
-%                         rho_w(i,j) = fzero(@(rho) rho_IAPWS(rho,T(i),P(j)*1e2),rho_g2); % T in K , P in MPa
-%                     else
-%                         rho_w(i,j) = fzero(@(rho) rho_IAPWS(rho,T(i),P(j)*1e2),rho_g1); % T in K , P in MPa
-%                     end
-%                 end
-%             end
-%         end
         for i = 1:length(T)
             if T(i) > 573.15
                 rho_w(i) = fzero(@(rho) rho_ZD09(rho,T(i),P(i)),rho_g1); % T in K , P in kbar
@@ -95,15 +58,6 @@ switch EOS
         %% Zhang and Duan 2005 EOS
         rho_g1 = 1800;
         rho_g2 = 1000;
-%         for i = 1:length(T)
-%             for j = 1:length(P)
-%                 if T(i) > 573.15
-%                     rho_w(i,j) = fzero(@(rho) rho_ZD05(rho,T(i),P(j)),rho_g1); % T in K , P in kbar
-%                 else
-%                     rho_w(i,j) = fzero(@(rho) rho_ZD05(rho,T(i),P(j)),rho_g2); % T in K , P in kbar               
-%                 end                
-%             end
-%         end
         for i = 1:length(T)            
             if T(i) > 573.15
                 rho_w(i) = fzero(@(rho) rho_ZD05(rho,T(i),P(i)),rho_g1); % T in K , P in kbar
@@ -113,19 +67,13 @@ switch EOS
         end
     case 'CORK'
         %% Holland and Powell (1991) CORK
-        td = zeros(1,18);
-        td(17) = 1;
-%         [T2d,P2d] = ndgrid(T,P);
-%         [~,V] = intVdP(T2d(:),P2d(:)*1e8,td,4);
-%         rho_w = (18.0150/10)./V;       
-%         rho_w = reshape(rho_w,length(T),length(P));        
-        [~,V] = intVdP(T,P*1e8,td,4);
+        td = init_thermo({'H2O,tc-ds55'});
+        [~,V] = intVdP(T,P*1e8,td(1).em_data{1},4);
         rho_w = (18.0150e3/10)./V;
     case 'PS94'
-        td = zeros(1,25);
-        td(25) = 1;
-        [~,V] = intVdP(T,P*1e8,td,5);
-        rho_w = (18.0150e3)./V;
+        td = init_thermo({'H2O,tc-ds633'});
+        [~,V] = intVdP(T,P*1e8,td(1).em_data{1},5);
+        rho_w = (18.0150e3/10)./V;
 end
 end
 function Pr_JN91  = EOS_JN91(rho,T)
