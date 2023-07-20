@@ -120,7 +120,12 @@ switch EOS
 %         rho_w = (18.0150/10)./V;       
 %         rho_w = reshape(rho_w,length(T),length(P));        
         [~,V] = intVdP(T,P*1e8,td,4);
-        rho_w = (18.0150e3/10)./V;               
+        rho_w = (18.0150e3/10)./V;
+    case 'PS94'
+        td = zeros(1,25);
+        td(25) = 1;
+        [~,V] = intVdP(T,P*1e8,td,5);
+        rho_w = (18.0150e3)./V;
 end
 end
 function Pr_JN91  = EOS_JN91(rho,T)

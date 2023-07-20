@@ -1,4 +1,4 @@
-clear,figure(1),clf,colormap jet,addpath ../ ../Utilities/ ../Solutions/
+clear,figure(1),clf,colormap jet,addpath ../
 T   = 25+273.15;
 P   = 1e5;
 X = {'Si','Al','K','H','O','e'};

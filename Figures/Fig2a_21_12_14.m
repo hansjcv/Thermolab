@@ -1,4 +1,4 @@
-clear,clf,addpath ../ ../Utilities/ ../Solutions/
+clear,clf,addpath ../
 T        = linspace(25,800,100)+273.15;
 P        = linspace(0.1,4,100)*1e9;
 Tr = 25 + 273.15;

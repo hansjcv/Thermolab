@@ -1,6 +1,6 @@
 clear,figure(1),clf,colormap jet,addpath ../,addpath ../Utilities/
 clear,colormap jet
-runname  = 'soapstone_2022_02_14_n1500_nz15_full'; 
+runname  = 'soapstone_2022_02_14_n500_nz15_full_0_5kb'; 
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm      = molmass_fun(Cname);
 solv_tol  = 100;
@@ -18,9 +18,9 @@ for iPT = 1:length(T2d(:))
     disp(iPT/length(T2d(:)))
 end
 Cs_tab = cwt_solid(strcmp(Cname,'C'),:);
-Mg_tab = cwt_solid(strcmp(Cname,'Mg'),:);  
-Fe_tab = cwt_solid(strcmp(Cname,'Fe'),:);  
-Al_tab = cwt_solid(strcmp(Cname,'Al'),:);  
+Mg_tab = cwt_solid(strcmp(Cname,'Mg'),:);
+Fe_tab = cwt_solid(strcmp(Cname,'Fe'),:);
+Al_tab = cwt_solid(strcmp(Cname,'Al'),:);
 Cf_tab = cwt_fluid(strcmp(Cname,'C'),:);
 phi0 = 0.3;
 Cs_im(1,:)  = Al_tab;
@@ -33,7 +33,7 @@ for i = 1:size(Cs_im,1)
     phi_srho_sCs_im0 = (1 - phi0).*rhos0.*Cs_im0;
     phi_f(i,:)     = 1 - phi_srho_sCs_im0./(Cs_im(i,:).*rhos);
 end
-figure(1),plot(Cs_tab,phi_f,'o')
+figure(1),plot(Cs_tab,phi_f(1,:),'o',Cs_tab,phi_f(2,:),'x',Cs_tab,phi_f(3,:),'*'),legend('Al','Mg','Fe')
 solid_id    = find(~strcmp(phs_name,fluid));
 solid_names = phs_name(solid_id);
 vol_frac_solids = phs_modes(:,solid_id)./sum(phs_modes(:,solid_id),2);

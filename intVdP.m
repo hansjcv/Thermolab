@@ -5,9 +5,38 @@ if eos==4
     [VdP,V] = HP_CORK(T,P,fl);
     VdP = VdP*1e3;
 elseif eos == 5
-    fl = td(25);
-    [VdP,V] = intVdP_PS94(unique(T),unique(P),fl);
-    VdP = VdP*1e3;
+    fl      = td(25);  
+    P       = P*1e3; % convert to pressure in bar
+    SdT     = intSdT(T,P,td,1);
+    phs_id  = fl;
+    options = optimset('Display','off');
+    % Find minimum G and corresponding rho
+    rho_guess = [1.2 0.08 1.2/1000];
+    gH2O      = zeros(size(T,1),length(rho_guess));
+    VdPall    = zeros(size(T,1),length(rho_guess));
+    VdP       = zeros(size(T));
+    rho       = zeros(size(T));
+    rho_kgm3  = zeros(size(T));
+    for k = 1:length(rho_guess)
+        rho_w = zeros(size(T));
+        rho1  = rho_guess(k);
+        for iT = 1:length(T)
+            rho_w(iT) = fzero(@(rho) PS94(rho,T(iT),phs_id)-P(iT)./83.14462./T(iT),rho1,options);
+        end
+        rho_kgm3(:,k)        = 18.015e3*rho_w;
+        [~,~,~,lnf]          = PS94(rho_w,T,phs_id);
+        VdPall(:,k)          = 8.314462*lnf(:).*T(:);
+        gH2O(:,k)            = - SdT + VdPall(:,k);
+        gH2O(rho_w<0,k)      = 1000;
+        gH2O(isnan(rho_w),k) = 1000;
+    end
+    % Find minimum
+    [~,id] = min(gH2O,[],2);
+    for k = 1:length(rho_guess)
+        rho(id==k) = rho_kgm3(id==k,k);
+        VdP(id==k) = VdPall(id==k,k);
+    end
+    V = 1./(rho/18.015e3)/10; % J/bar/mol
 elseif eos == 1
     Tr = 25 + 273.15;
     Pr = 1e-3;Vr = td(3);a0 = td(8);k0 = td(10);dqf = td(18);

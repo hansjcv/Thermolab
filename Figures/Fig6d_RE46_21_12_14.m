@@ -1,4 +1,4 @@
-clear,clf,addpath ../,addpath ../Solutions
+clear,clf,addpath ../
 % Fig6d
 T = linspace(1000,1400,10) + 273.15;
 P = linspace(0.01,1.2,11)*1e9;            
@@ -13,7 +13,7 @@ td        = init_thermo(phs_name,Cname,'solution_models_RE46');
 p = props_generate(td);
 [g,Nphs,psc_id,p] = tl_gibbs_energy(T2d(:),P2d(:),phs_name,td); % compute Gibbs energy for all possible phases
 LB  = zeros(1,size(g,1)); % do not look for alph below zero, because stable phase amount cannot be negative.
-parfor iTX = 1:length(T2d(:))
+for iTX = 1:length(T2d(:))
     alph{iTX} = linprog(g(:,iTX),[],[],Nphs,Nsys',LB); % The Gibbs energy minimization           
     disp(iTX/length(T2d(:)))
 end
