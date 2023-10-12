@@ -95,14 +95,19 @@ elseif dgex == 3
     dG =  (w.*(-Z - 1) ...
         - td(10)*(-ZPrTr - 1) ...
         + td(10)*YPrTr*(T-Tref))*4.184;                                                %from eq. 59 Johnson et al 1992 see Dolejs RimG 76
-elseif dgex == 4
+elseif dgex == 4 || dgex == 5
     P = P/1e8;
     rho_gcm3 = rho_w*1e-3;
     R = 8.3144e-3;
     Vref = 1.817884158651069;    
     Mw   = 18.0150;
     rho0 = Mw/10/Vref;
-    Href = td(1);Sref  = td(2 );V1_298 = td(3); b = td(5 );Cp0 = td(14);
+    Href = td(1);Sref  = td(2 );V1_298 = td(3); b = td(5 );
+    if dgex == 4
+        Cp0 = td(14);
+    elseif dgex == 5
+        Cp0 = td(21);
+    end
     Tref = 298.15; Pref = 1e-3; T1 = T; T1(T>500) = 500; dadT = 9.5714e-6; a0 = 25.93e-5; B0 = 45.23e-6*1e3; % given in bar-1 convert to kbar-1    
 %     [~,Vref] = intVdP(Tref,Pref,td,4);
     % Gibbs calculation aqueous species HP 1998
