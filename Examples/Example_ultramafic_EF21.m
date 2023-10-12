@@ -1,16 +1,28 @@
 clear,clf, addpath ../ ../EOS ../Solutions/ ../Utilities/
-run_name = 'serp';
-T      = linspace(200,900,10) + 273.15;
-P      = linspace(0.1,4.0,11)*1e9;
+run_name = 'EF21_red';
+T      = linspace(300,850,20) + 273.15;
+P      = linspace(0.5,4.0,21)*1e9;
 solmod = 'solution_models_EF21';
 ngrid    = 4; % number of P-T grid refinements, each time, the P-T grid resolution is doubled.
 eps_solv = 1;
-Cname  = {'Si' ,'Fe'   ,  'Mg',   'H','O'  };
-Nsys   = [34      10       38+1    62+2 147+2+0.01];
+Cname   = {'Si'   ,'Al'   ,'Mg', 'Fe',  'S', 'H','O'  };
+A       = [1        0       0    0       0    0    2
+           0        2       0    0       0    0    3
+           0        0       1    0       0    0    1
+           0        0       0    1       0    0    1
+           0        0       0    2       0    0    3
+           0        0       0    1       2    0    0
+           0        0       0    0       0    2    1];
+wtnames = {'SiO2' ,'Al2O3','MgO','FeO','Fe2O3','FeS2','H2O'};
+% wtperc  = [34.17  1.81     33.44  2.23  4.33    0.12   23.90];
+wtperc  = [34.31  1.81     33.58  5.88  0.30    0.12   24.00];
+molm    = molmass_fun(wtnames,Cname,A);
+Nsys_oxi = wtperc./molm';
+Nsys      = Nsys_oxi*A;
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
-phs_name = {'Antigorite','Brucite','Olivine','Orthopyroxene','Talc','Spinel','Lizardite','Fluid'};
+phs_name = {'Antigorite','Brucite','Olivine','Orthopyroxene','Talc','Spinel','Chlorite','Garnet','Fluid','Pyrrhotite','Clinohumite','pyr,tc-ds633','anth,tc-ds633'};
 td       = init_thermo(phs_name,Cname,solmod);
-for i = 1:length(phs_name),td(i).dz(:) = 1/6;end
+for i = 1:length(phs_name),td(i).dz(:) = 1/4;end
 p         = props_generate(td);     % generate endmember proportions
 refine_id = ones(length(T)*length(P),1);
 % Minimization refinement
