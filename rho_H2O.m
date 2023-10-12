@@ -67,12 +67,16 @@ switch EOS
         end
     case 'CORK'
         %% Holland and Powell (1991) CORK
-        td = init_thermo({'H2O,tc-ds55'});
-        [~,V] = intVdP(T,P*1e8,td(1).em_data{1},4);
+        % td = init_thermo({'H2O,tc-ds55'});
+        td = [-1.722516050000000, 0.001888000000000, 0,0.000401000000000,   0.000000086560000,   4.875000000000000,  -0.002512000000000,                   0,                   0,                   0,                   0,                   0,                   0,                   0,                   0,                   0,   0.010000000000000,                   0]*1e2;
+        % td = zeros(1,18); td(17) = 1;
+        [~,V] = intVdP(T,P*1e8,td,4);
         rho_w = (18.0150e3/10)./V;
     case 'PS94'
-        td = init_thermo({'H2O,tc-ds633'});
-        [~,V] = intVdP(T,P*1e8,td(1).em_data{1},5);
+        % td = init_thermo({'H2O,tc-ds633'});
+        td = [-1.722516050000000,0.001888000000000, 0,0.000401000000000,0.000000086560000,4.875000000000000, -0.002512000000000,0, 0,0, 0,NaN,NaN, NaN,NaN,NaN, NaN, NaN, NaN, NaN, NaN, NaN,0.030000000000000,  0, 0.010000000000000,   0, 0]*1e2;
+        % td = zeros(1,27); td(25) = 1;
+        [~,V] = intVdP(T,P*1e8,td,5);
         rho_w = (18.0150e3/10)./V;
 end
 end

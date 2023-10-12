@@ -78,6 +78,22 @@ elseif model_type == 3
     end
 elseif model_type == 5 % Evans and Powell (2006) unfinished model!
       g_nid = sum(p(:,1:end-1)*8.3145*T*log(1000/18.0150),2);
+elseif model_type == 6
+    Pbar = P*1e3;
+    was_nacl_kcl = (397.88 + 0.14768*(Pbar-1))/T + 9.267 - 1.1724e-4*(Pbar-1) - 1.7728e-2*T + 8.8543e-6*T^2;
+    wbs_nacl_kcl = 573.04/T + 0.17979 - 4.202e-5*T;    
+    g_nid = 8.31477*T*p(:,1).*p(:,2).*(was_nacl_kcl + wbs_nacl_kcl*p(:,1));
+elseif model_type == 7
+    Pbar = P*1e3;
+    w_nacl_h2o = -(600.08 + 0.1292*(Pbar-1))/T + 0.60794;
+    w_kcl_h2o = -(781.42 + 0.15446*(Pbar-1))/T + 0.39498;
+    wa_nacl_kcl = -(246.6 + 0.031026*(Pbar-1))/T -0.22741;
+    wb_nacl_kcl = -32.7/T + 0.12075;
+    w_nacl_kcl_h2o = (392.62 + 0.15223*(Pbar-1))/T - 0.61532;
+    g_nid = 8.31477*T*(p(:,1).*p(:,3)*w_nacl_h2o ...
+            + p(:,2).*p(:,3)*w_kcl_h2o ...
+            + p(:,1).*p(:,2).*(wa_nacl_kcl + wb_nacl_kcl*p(:,1)) ...
+            + p(:,1).*p(:,2).*p(:,3)*w_nacl_kcl_h2o);
 elseif model_type == 0
     g_nid = 0;
 end

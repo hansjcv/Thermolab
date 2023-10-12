@@ -22,7 +22,7 @@ for i_sol = 1:numel(td)
         v0{i_sol}(:,k)     = mcoef{k}*Vjp';
         s0{i_sol}(:,k)     = mcoef{k}*Sjp';
         if Gapp == 1
-            g0{i_sol}(:,k) = g0{i_sol}(:,k) - mcoef{k}*Hfjp'*1e3;
+            g0{i_sol}(:,k) = g0{i_sol}(:,k) - (mcoef{k}*Hfjp'*1e3)';
         end
     end
 end

@@ -18,7 +18,7 @@ for i = 1:size(z,1) % loop over species in the fluid
     end
 end
 mt   = sum(z_m,1); % total molality
-Lgam = -log10(1+Mw*mt); % large gamma (for 1 kg of water) conversion factor see Helgeson L gamma page 1293 eq 122
+Lgam = -log10(1+Mw*mt); % large gamma (for 1 kg of water) conversion factor see Helgeson L gamma page 1293 eq 122, same as eq 2 in Miron 2016, assuming njw mole amount of water-solvent = 1
 % Debye-Hueckel A and B parameters
 A = (1.82483e6)*sqrt(rho_w_gcm3(:)) ./ (T(:).*eps_di(:)).^(3/2);
 B = (50.2918649e8)*sqrt(rho_w_gcm3(:)) ./ sqrt(T(:).*eps_di(:));
