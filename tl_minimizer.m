@@ -81,15 +81,10 @@ p = p_iref{find(exitflag==1,1,'last')};
 Npc = Nphs_iref{find(exitflag==1,1,'last')};
 pc_id = psc_id_iref{find(exitflag==1,1,'last')};
 gmin_ref = gmin_ref(1:find(exitflag==1,1,'last'));
-% p_unstb = zeros(size(p));
 for ip = 1:length(p)
     unstb_id = alph(pc_id==ip)==0;
     p{ip}(unstb_id,:) = []; % throw out zeros    
-    % if isempty(p{ip})
-    %     p_unstb(ip) = 1;
-    % end
 end
-% p = p(p_unstb==0);
 Npc(:,alph==0)   = []; % throw out zeros
 pc_id(alph==0)   = []; % throw out zeros
 alph(alph==0)    = []; % throw out zeros
