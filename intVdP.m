@@ -6,13 +6,19 @@ if eos==4
     VdP = VdP*1e3;
 elseif eos == 5
     fl      = td(25);
-    if fl>1
+    if fl>2
         [VdP,V] = HP_CORK(T,P,fl);
         VdP = VdP*1e3;
     else
         P       = P*1e3; % convert to pressure in bar
         SdT     = intSdT(T,P,td,1);
-        Gr      = -2.28542325e5;
+        if fl == 1
+            Gr        = -2.28542325e5;
+            molarmass = 18.015e3;
+        elseif fl ==2
+            Gr        = -3.94332894e5;
+            molarmass = 44.0095e-3;
+        end
         phs_id  = fl;
         options = optimset('Display','off');
         % Find minimum G and corresponding rho
@@ -28,7 +34,7 @@ elseif eos == 5
             for iT = 1:length(T)
                 rho_w(iT) = fzero(@(rho) PS94(rho,T(iT),phs_id)-P(iT)./83.14462./T(iT),rho1,options);
             end
-            rho_kgm3(:,k)        = 18.015e3*rho_w;
+            rho_kgm3(:,k)        = molarmass*rho_w;
             [~,~,~,lnf]          = PS94(rho_w,T,phs_id);
             VdPall(:,k)          = 8.314462*lnf(:).*T(:);
             gH2O(:,k)            = Gr - SdT + VdPall(:,k);
@@ -41,7 +47,7 @@ elseif eos == 5
             rho(id==k) = rho_kgm3(id==k,k);
             VdP(id==k) = VdPall(id==k,k);
         end
-        V = 1./(rho/18.015e3)/10; % J/bar/mol
+        V = 1./(rho/molarmass)/10; % J/bar/mol
     end
 elseif eos == 1
     Tr = 25 + 273.15;
