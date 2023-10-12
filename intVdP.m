@@ -6,7 +6,7 @@ if eos==4
     VdP = VdP*1e3;
 elseif eos == 5
     fl      = td(25);
-    if fl>2
+    if fl>1
         [VdP,V] = HP_CORK(T,P,fl);
         VdP = VdP*1e3;
     else
