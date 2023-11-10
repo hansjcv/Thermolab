@@ -181,6 +181,11 @@ elseif eos == 11
     Vr  = td(8);
     VdP = Vr*(P-Pr);
     V   = Vr;
+elseif eos == 12
+    P   = P*1e3;Pr = 1;
+    Vr  = td(4);
+    VdP = Vr*(P-Pr);
+    V   = Vr;
 else
     V   = 0;
     VdP = 0;

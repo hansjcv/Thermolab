@@ -1,4 +1,4 @@
-clear,clf,addpath ../
+clear,clf,addpath ../ ../Solutions ../EOS
 % Fig6a
 T = linspace(1200,2000,30) + 273.15;
 P = 1e5;

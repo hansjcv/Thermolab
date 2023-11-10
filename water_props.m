@@ -7,7 +7,7 @@ for i_sol = 1:length(phase)
             rho_w_model  = 'JN91';
         elseif contains(phase(i_sol),'DEW')
             rho_w_model  = 'ZD05';
-        elseif contains(phase(i_sol),'tc-ds633')
+        elseif contains(phase(i_sol),'tc-ds633') || contains(phase(i_sol),'tc-ds62')            
             rho_w_model  = 'PS94';
         else            
             rho_w_model  = 'CORK';

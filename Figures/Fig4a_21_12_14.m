@@ -1,4 +1,4 @@
-clear,clf,addpath ../
+clear,clf,addpath ../ ../EOS
 % Example phase diagrams Fig 4
 T = linspace(400,750,20) + 273.15;
 P = linspace(0.1,1,21)*1e9;  

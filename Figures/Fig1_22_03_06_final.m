@@ -1,4 +1,4 @@
-clear,addpath ../
+clear,addpath ../ ../Solutions
 %% Input
 T       = 995.3340;                                                                 % T in Kelvin
 P       = 0.2e9;                                                                    % P in Pascal

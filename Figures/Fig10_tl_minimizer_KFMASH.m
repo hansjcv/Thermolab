@@ -1,4 +1,4 @@
-clear,clf,addpath ../
+clear,clf,addpath ../ ../Solutions
 run_name = 'KFMASH_2022_03_06_10x11';
 T     = linspace(400,700,10) + 273.15;
 P     = linspace(0.1,1.5,11)*1e9;

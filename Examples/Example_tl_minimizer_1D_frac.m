@@ -1,10 +1,10 @@
-clear,clf,addpath ../ ../Utilities/ ../Solutions/
+clear,clf,addpath ../ ../Utilities/ ../Solutions/ ../EOS
 run_name = 'K32_2023_01_26_PTpath';
 T        = linspace(600,850,20) + 273.15; % Temperature
 dPdT     =  2e9/200;
 P0       = 1e9;
 P        = P0 + dPdT*(T-T(1));           % rho*g*z assumption
-solmod = 'solution_models_HP98_Fe2';
+solmod = 'solution_models_HP98';
 Oxname = {'SiO2','Al2O3','Cr2O3','TiO2',  'FeO'  ,'MnO', 'MgO',  'CaO',  'Na2O', 'K2O',  'H2O'};
 wtOx   = [60.04  15.91  0        0.77     8.36     0.11   4.81    4.14    2.34    2.33     50];
 dz     = 1/6;
@@ -16,9 +16,9 @@ molmOx = [60.084  101.961 151.9904 79.8658  71.844  70.93744  40.304  56.077 61.
 NsysOx = wtOx./molmOx;
 Nsys   = NsysOx.*ncat;Nsys = [Nsys Nsys*(noxy./ncat)']; Nsys = Nsys/sum(Nsys);% someone measured rock composition of a pelite
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
-phs_name = {'Quartz','Chlorite','Garnet','Spinel','Biotite','Muscovite','Staurolite','Feldspar(C1)','Chloritoid',...
+phs_name = {'Chlorite','Garnet','Spinel','Biotite','Muscovite','Staurolite','Feldspar(C1)','Chloritoid',...
     'Antigorite','Brucite','Amphibole','Olivine','Orthopyroxene','Clinopyroxene','Talc','Magnesite','Epidote',...
-    'Cordierite','Ilmenite','ru,tc-ds55','and,tc-ds55','sill,tc-ds55','ky,tc-ds55','H2O,tc-ds55','lime,tc-ds55','per,tc-ds55','cor,tc-ds55','zo,tc-ds55'}; 
+    'Cordierite','Ilmenite','ru,tc-ds55','and,tc-ds55','sill,tc-ds55','ky,tc-ds55','H2O,tc-ds55','lime,tc-ds55','per,tc-ds55','cor,tc-ds55','zo,tc-ds55','q,tc-ds55'}; 
 td       = init_thermo(phs_name,Cname,solmod);
 c_exc = find(Nsys==0);
 for i_sol = 1:length(phs_name)    

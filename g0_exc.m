@@ -15,8 +15,6 @@ if dgex == 1
     G_land  = Smax.*((T-Tc).*Q.^2 + (1/3).*Tc.*Q.^6);
     dG      = (h_298 - T.*s_298 + intvdP + G_land.*logical(T<=Tc))*1e3;
 elseif dgex == 2
-%     eos   = 2;    
-%     vterm = intVdP(T,P,td,eos)*1e-3;  % inconsequently, the vterm=VdP is used here again. fix later by splitting excess VdP from excess SdT
     Tr = 25 + 273.15; P = P/1e8;    
     %% Load data
     Tc0  = td(12);Smax = td(13);Vmax   = td(14);
@@ -29,13 +27,9 @@ elseif dgex == 2
         temp_q2   = sqrt((tcp-T)./Tc0);
         q2(T<tcp) = temp_q2(T<tcp);
         g_exc     = Smax.*(Tc0.*(q20.*(1 - 1/3.*q20.^2) + 1/3*q2.^3) - q2.*tcp) - T.*Smax.*(q20 - q2) + P.*Vmax.*q20;
-%         s_exc     = Smax.*(q20-q2);
-%         h_exc     = Smax.*(Tc0.*(q20-q20.*(q20.^2)/3 + q2.*(q2.^2)/3) - tcp.*q2);
-%         h_exc     = h_exc + Vmax.*q20.*vterm;
-%         g_exc     = h_exc - T.*s_exc;
-        if od == 1 % in case of disordered endmember
+        if od == 1 % in case of ordered endmember ?
             g_exc     = Tc0.*Smax.*(-2/3 + q20.*(1 - q20.^2/3)) - Tc0.*Smax.*(q20 - 1) + P.*Vmax.*(q20 - 1);
-        elseif od == 2
+        elseif od == 2 % in case of disordered endmember ?
             g_exc     = Tc0.*Smax.*q20.*(1 - q20.^2/3) - T.*Smax.*q20 + P.*Vmax.*q20;
         end
     else
@@ -95,16 +89,19 @@ elseif dgex == 3
     dG =  (w.*(-Z - 1) ...
         - td(10)*(-ZPrTr - 1) ...
         + td(10)*YPrTr*(T-Tref))*4.184;                                                %from eq. 59 Johnson et al 1992 see Dolejs RimG 76
-elseif dgex == 4
+elseif dgex == 4 || dgex == 5
     P = P/1e8;
     rho_gcm3 = rho_w*1e-3;
-    R = 8.3144e-3;
     Vref = 1.817884158651069;    
     Mw   = 18.0150;
     rho0 = Mw/10/Vref;
-    Href = td(1);Sref  = td(2 );V1_298 = td(3); b = td(5 );Cp0 = td(14);
+    Href = td(1);Sref  = td(2 );V1_298 = td(3); b = td(5 );
+    if dgex == 4
+        Cp0 = td(14);
+    elseif dgex == 5
+        Cp0 = td(21);
+    end
     Tref = 298.15; Pref = 1e-3; T1 = T; T1(T>500) = 500; dadT = 9.5714e-6; a0 = 25.93e-5; B0 = 45.23e-6*1e3; % given in bar-1 convert to kbar-1    
-%     [~,Vref] = intVdP(Tref,Pref,td,4);
     % Gibbs calculation aqueous species HP 1998
     Cps   = Cp0 - Tref*b;
     Gref  = Href - Tref*Sref;
@@ -116,12 +113,9 @@ end
 end
 function f = bragg_will(dH,W,Q,fac,n,T)
 R = 8.3144/1e3;
-% From email:
-% f = dH + W*(2*Q-1) + fac*n/(n+1)*R*T*log(n*(1-Q).^2./((1+n*Q).*(n+Q)));
 % From paper:
 K = ((n-n*Q).*(1-Q))./((1+n*Q).*(n+Q));
 f = dH + W.*(2.*Q-1) + fac.*n./(n+1).*R.*T.*log(K);
-% f = dH + W*(2*Q-1) + 1*n/(n+1)*R*T*log(K);
 end
 function ihq = symm_form(T,dH,W,n,fac)
 
@@ -152,8 +146,4 @@ else
         ihq = qk;
     end
 end
-% Q = [0.00001:0.0001:0.9999 1-small];
-% plot(Q,bragg_will(dH,W,Q,fac,n,T));
-% disp(fk)
-% disp(qk)
 end

@@ -1,4 +1,4 @@
-clear,addpath ../
+clear,addpath ../ ../Utilities/
 runname = 'KFMASH_2022_03_06_10x11';
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm = molmass_fun(Cname);
@@ -9,4 +9,4 @@ for iPT = 1:length(T2d(:))
     asm_id(iPT,1:length(phi)) = pc_id;
 end
 figure(1),
-tl_psection(T-273.15,P/1e9,Cname,asm_id,phs_name,[0 0],10);
+tl_psection(T-273.15,P/1e9,Cname,asm_id,phs_name,0,[0 0],10);
