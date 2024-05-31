@@ -20,7 +20,7 @@ end
 asm_id_raw  = sort(asm_id,2);
 asm_ids     = unique(sort(asm_id_raw,2),'rows');
 asm_id_arr = zeros(size(asm_id,1),1);
-for i = 1:size(asm_ids)
+for i = 1:size(asm_ids,1)
     asm_id_arr(sum(abs(asm_id_raw-asm_ids(i,:)),2)==0) = i;
     asm_name{i} = phs_names(asm_ids(i,asm_ids(i,:)>0));
 end

@@ -5,12 +5,11 @@ P = linspace(0.01,1.2,11)*1e9;
 Cname = {'Si','Al'       ,'Fe'   ,'Mg', 'Ca', 'Na'   'Ti','O'};
 Nsys =  [50.06  2*9.31    7.64   16.36 14.84  2*1.54  0.38];
 noxy  = [2      3/2        1     1      1     1/2       2];
-Nsys = [Nsys Nsys*noxy']; % someone measured rock composition of a pelite
+Nsys = [Nsys Nsys*noxy']; %
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
 phs_name    = {'Olivine','Clinopyroxene','Feldspar(I1)','Melt(H18)','Ilmenite'};
 td        = init_thermo(phs_name,Cname,'solution_models_RE46');
 [T2d,P2d] = ndgrid(T,P);
-p = props_generate(td);
 [g,Nphs,psc_id,p] = tl_gibbs_energy(T2d(:),P2d(:),phs_name,td); % compute Gibbs energy for all possible phases
 LB  = zeros(1,size(g,1)); % do not look for alph below zero, because stable phase amount cannot be negative.
 for iTX = 1:length(T2d(:))

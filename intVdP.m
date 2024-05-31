@@ -93,7 +93,7 @@ elseif eos == 2
         VdP = V1_T.*P;
     end
     VdP = VdP*1e3;
-    V   = V1_T;
+    V   = V1_T.*(1-ta.*(1-(1+tb.*(P-pth)).^(-tc)));
 elseif eos == 3 % HKF
     Pref   = 1;
     Pbar   = P*1e3;
@@ -186,6 +186,18 @@ elseif eos == 12
     Vr  = td(4);
     VdP = Vr*(P-Pr);
     V   = Vr;
+elseif eos == 13
+    P   = P*1e3;Pr = 1;Tr = 298.15;
+    Vr  = td(4);v1 = td(12);v2 = td(13);v3 = td(14);v4 = td(15);
+    V      = Vr*(1 + v1*(P-Pr) + v2*(P-Pr).^2 + v3*(T-Tr) + v4*(T-Tr).^2);
+    VdP = (v1*(1/2*P.^2 - P*Pr + 1/2*Pr^2) ...
+        + v2*(1/3*P.^3 - P.^2*Pr + Pr^2*P - 1/3*Pr^3) ...
+        + v3*(P.*T - P*Tr - Pr*T + Pr*Tr) ...
+        + v4*(P.*T.^2 - 2*P.*T*Tr + P*Tr^2 - Pr*T.^2 + 2*Pr*T*Tr - Pr*Tr^2) ...
+        + P - Pr)*Vr;
+elseif eos == 14 % to do Berman water, now set to CORK
+    [VdP,V] = HP_CORK(T,P,1);
+    VdP = VdP*1e3;
 else
     V   = 0;
     VdP = 0;

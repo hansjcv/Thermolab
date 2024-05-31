@@ -107,6 +107,40 @@ elseif dgex == 4 || dgex == 5
     Gref  = Href - Tref*Sref;
     dG  = ((Href - T.*Sref + (P-Pref).*V1_298 + b.*(Tref.*T - 0.5*Tref^2 - 0.5*T.^2)...
         +  (Cps./(Tref.*dadT)).*(a0.*(T-Tref) - B0.*(P-Pref) + (T./T1).*log(rho_gcm3./rho0)) - Gref))*1e3;
+elseif dgex == 6
+    P = P/1e5;
+    T1_lamb = td(16);Tref_lamb = td(17);l1 = td(18);l2 = td(19);dTdP = td(20);
+    TP_lamb = T1_lamb + dTdP*(P-1);
+    T_d = T1_lamb-TP_lamb;
+    tr = Tref_lamb-T_d;    
+    x1 = l1^2*T_d + 2*l1*l2*T_d.^2 + l2^2*T_d.^3;
+    x2 = l1^2 + 4*l1*l2*T_d + 3*l2^2*T_d.^2;
+    x3 = 2*l1*l2 + 3*l2^2*T_d;
+    x4 = l2^2;
+    Hlamb = x1.*(T-tr) + x2./2.*(T.^2-tr.^2) + x3./3.*(T.^3-tr.^3) + x4./4.*(T.^4-tr.^4);
+    Slamb = x1.*(log(T)-log(tr)) + x2.*(T-tr) + x3./2.*(T.^2-tr.^2) + x4./3.*(T.^3-tr.^3);
+    Glamb = Hlamb - T.*Slamb;
+    Hlamb2 = x1.*(TP_lamb-tr)+x2./2.*(TP_lamb.^2-tr.^2) + x3./3.*(TP_lamb.^3-tr.^3) + x4./4.*(TP_lamb.^4-tr.^4);
+    Slamb2 = x1.*(log(TP_lamb)-log(tr)) + x2.*(TP_lamb-tr) + x3./2.*(TP_lamb.^2-tr.^2) + x4./3.*(TP_lamb.^3-tr.^3);
+    Glamb2 = Hlamb2 - T.*Slamb2;
+    if T1_lamb~=0
+        dG =  Glamb.*logical(T<=TP_lamb) + Glamb2.*logical(T>TP_lamb);
+        if dTdP==0
+            dG = - (T-TP_lamb).*Slamb.*logical(T<=TP_lamb);
+        end
+    end
+elseif dgex == 7
+    P = P/1e5; Pr = 1;
+    d0 = td(21);d1 = td(22);d2 = td(23);d3 = td(24);d4 = td(25);d5 = td(26);Tmin = td(27);Tmax = td(28);
+    Hds   = d0*(T-Tmin) + 2*d1*(T.^(0.5)-Tmin^0.5) - d2*(T.^(-1)-Tmin^(-1)) + d3*(log(T)-log(Tmin)) + d4*(T.^2-Tmin^2)/2 + d5*(T.^3-Tmin^3)/3;
+    Sds   = d0*(log(T)-log(Tmin)) - 2*d1*(T.^(-0.5)-Tmin^(-0.5)) - d2*(T.^(-2)-Tmin^(-2))/2 + d3*(T-Tmin) + d4*(T-Tmin) + d5*(T.^2-Tmin^2)/2;
+    Vds   = 0;
+    dGds  = Hds - T.*Sds + Vds.*(P-Pr);
+    Hds2  = d0*(T-Tmax) + 2*d1*(T.^(0.5)-Tmax^0.5) - d2*(T.^(-1)-Tmax^(-1)) + d3*(log(T)-log(Tmax)) + d4*(T.^2-Tmax^2)/2 + d5*(T.^3-Tmax^3)/3;
+    Sds2  = d0*(log(T)-log(Tmax)) - 2*d1*(T.^(-0.5)-Tmax^(-0.5)) - d2*(T.^(-2)-Tmax^(-2))/2 + d3*(T-Tmax) + d4*(T-Tmax) + d5*(T.^2-Tmax^2)/2;   
+    Vds2  = 0;   
+    dGds2 = Hds2 - T.*Sds2 + Vds2.*(P-Pr);
+    dG    =  dGds  + dGds2.*logical(T>Tmax);    
 else
     dG = zeros(size(T,1),size(P,2));
 end

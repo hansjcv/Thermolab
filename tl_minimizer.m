@@ -1,4 +1,4 @@
-function [alph,Npc,pc_id,p,gmin_ref] = tl_minimizer(T,P,Nsys,phs_name,p,td,options,rho_w,eps_di,g0,v0)
+function [alph,Npc,pc_id,p,gmin_ref] = tl_minimizer(T,P,Nsys,phs_name,p,td,options,rho_w,eps_di,g0,v0,spcs,Nspcs,g0_spcs)
 alph_tol = 0;   % tolerance for alph counted as stable phase
 if ~exist('rho_w','var'),[rho_w,eps_di] = water_props(T,P,phs_name); end
 if ~exist('eps_di','var'),[rho_w,eps_di] = water_props(T,P,phs_name); end
@@ -17,12 +17,22 @@ nref = options.nref;eps_dg = options.eps_dg;dz_tol=options.dz_tol;z_window = opt
 if ~exist('g0','var')
     [g0,v0] = tl_g0(T,P,td,rho_w,eps_di);
 end
+if ~exist('spcs','var')
+    spcs = [];
+end
+if ~exist('Nspcs','var')
+    Nspcs = [];
+end
+if ~exist('g0_spcs','var')
+    g0_spcs = [];
+end
 p_it    = cell(1,length(phs_name));
 td_ini  = td;
 gmin_old = 1e10;
 for i_ref = 1:nref       
-    [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di);
+    [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di,spcs,Nspcs,g0_spcs);
     LB            = zeros(1,size(g,1));    
+    Npc(Npc<1e-12)      =  0;
     if options.solver == 1
         Npc(Npc<1e-12)      =  0;  % Remove small number to avoid glpk instability
         [alph,gmin]  =  glpk(g,Npc,Nsys,LB,[],repmat('S',1,size(Npc,1)));     

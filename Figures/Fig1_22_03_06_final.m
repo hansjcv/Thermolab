@@ -7,7 +7,7 @@ solfile = 'solution_models_H18';                                                
 Cname   = {'Si'  ,'Ti'  ,'Al'  ,'Ca',  'Fe',  'Mg',  'Na'  ,'K'   ,'H'   ,'O'    }; % System component names
 Cmol    = [7.0006,0.1054,1.3603,1.6786,1.8705,2.9542,0.3382,0.0237,1.8946,24.0500]; % Composition in mol
 %% Load thermodynamic data
-[p_id,st,site_id,mtpl,mod_id,alp,w,n_em,chg,em_data,dGex,EOS,CEOS,mcoef,Gr] = init_phase(solfile,solname,Cname);
+[p_id,st,site_id,mtpl,mod_id,alp,w,n_em,chg,em_data,dGex,EOS,CEOS,mcoef,Gr,p_name] = init_phase(solfile,solname,Cname);
 %% Water properties
 rho_w   = rho_H2O(T,P,'ZD05');       % Water density (ZD05= Zhang & Duan (2005))
 eps_di  = eps_H2O(T,P,rho_w,'S14');  % Dielectric constant (S14 = Sverjensky et al.2014)
@@ -42,3 +42,5 @@ g      = g_mech + g_id + g_nid;                                                 
 %% Find stable configuration (homogeneous equilibrium)
 [gmin,id] = min(g);            % minimum of Gibbs energy
 p(id,:)                        % corresponding endmember proportions
+%% Show order-disorder reactions
+disp_reactions(p_name,null(n_em','r'))

@@ -1,4 +1,4 @@
-function [p_id,st,site_id,mtpl,mod_id,alp,w,Nphs,chg,td,dGex,EOS,CEOS,mcoef,Gref] = init_phase(sol_model,mineral,Cname)
+function [p_id,st,site_id,mtpl,mod_id,alp,w,Nphs,chg,td,dGex,EOS,CEOS,mcoef,Gref,p_name] = init_phase(sol_model,mineral,Cname)
 load 'tl_dataset' nphs elements phs_names make_coeff td_data ceos eos dgex Gr
 for ic = 1:length(Cname),c_ind(ic) = find(strcmp(elements,Cname(ic)));end
 sol_mod_list = sheetnames([sol_model '.xlsx']);
