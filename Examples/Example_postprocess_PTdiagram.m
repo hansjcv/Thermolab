@@ -1,5 +1,5 @@
 clear,clf, addpath ../ ../Utilities/ ../Solutions/ ../EOS
-runname = 'serp';
+runname = 'K32_2023_01_26_H18';
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm = molmass_fun(Cname);
 solv_tol = 2;
@@ -12,7 +12,7 @@ for iPT = 1:length(T2d(:))
 end
 figure(1),
 tl_psection(T-273.15,P/1e9,Cname,asm_id,phs_name,0,[0 0],6);
-% figure(2),
+figure(2),
 nrow = floor(sqrt(length(phs_name)));
 ncol = ceil(length(phs_name)/nrow);
 phs_modes = reshape(phs_modes,length(T),length(P),length(phs_name));
