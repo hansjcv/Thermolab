@@ -1,4 +1,4 @@
-clear,addpath ../ ../Solutions/
+clear,addpath ../ ../Solutions/ ../EOS
 Temp  = linspace(300,1000,30) + 273.15;
 Pres  = linspace(0.1,4,31)*1e9;
 phase = {'Olivine','Orthopyroxene','q,tc-ds633','per,tc-ds633'};

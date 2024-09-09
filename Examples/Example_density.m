@@ -1,4 +1,4 @@
-clear,clf, addpath ../ ../Solutions/ ../EOS
+clear,clf, addpath ../ ../Solutions/ ../EOS ../Utilities/
 T = 400 + 273.15;
 P = 1e9;
 dP = 1e5;

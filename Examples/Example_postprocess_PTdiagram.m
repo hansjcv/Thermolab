@@ -1,4 +1,4 @@
-clear,clf
+clear,clf, addpath ../ ../Utilities/ ../Solutions/ ../EOS
 runname = 'serp';
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm = molmass_fun(Cname);

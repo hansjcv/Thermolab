@@ -43,7 +43,7 @@ refine_id = ones(length(T)*length(P),1);
 % Minimization refinement
 for i_grid = 1:ngrid
     [T2d,P2d] = ndgrid(T,P);
-    for iPT = 1:length(T2d(:))
+    parfor iPT = 1:length(T2d(:))
         if refine_id(iPT) == 1
             [alph_all{iPT},Npc_all{iPT},pc_id_ref{iPT},p_ref{iPT},g_min{iPT}] = tl_minimizer(T2d(iPT),P2d(iPT),Nsys,phs_name,p,td,options);
             disp(iPT/length(T2d(:)))

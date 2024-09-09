@@ -1,4 +1,4 @@
-clear,addpath ../ ../Solutions
+clear,addpath ../ ../Solutions ../EOS
 T     = (300:100:1000) + 273.15;
 P     = (0.1:0.25:1)*1e9;
 phase = {'aqSi,tc-ds55','SiO2,aq,DEW'};

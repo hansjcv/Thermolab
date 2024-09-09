@@ -1,4 +1,4 @@
-clear,clf,addpath ..\ ..\Utilities\ ..\Solutions\
+clear,clf,addpath ..\ ..\Utilities\ ..\Solutions\ ..\EOS
 run_name = 'ternary_NaCl_KCl_H2O_573K';
 T = 300 + 273.15;
 P = 0.5e8;

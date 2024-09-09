@@ -1,4 +1,4 @@
-clear, addpath ../
+clear, addpath ../ ../EOS
 T     = 300 + 273.15;
 P     = 1e9;
 phase = {'q,tc-ds633'};

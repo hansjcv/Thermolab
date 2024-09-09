@@ -1,4 +1,4 @@
-clear,clf,addpath ..\ ..\Utilities\ ..\Solutions\
+clear,clf,addpath ..\ ..\Utilities\ ..\Solutions\ ..\EOS
 run_name = 'ternary_Feldspar_800C_2';
 T = 800 + 273.15;
 P = 1e8;
