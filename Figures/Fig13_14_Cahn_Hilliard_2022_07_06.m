@@ -1,4 +1,4 @@
-clear,figure(1),clf,colormap(jet(256)),addpath ../ ../Solutions/
+clear,figure(1),clf,colormap(jet(256)),addpath ../ ../Solutions/ ../Utilities/ ../EOS/
 % Physics
 Lx = 1;                                                        % Model domain length
 Dc = 1;                                                        % Diffusion coefficient

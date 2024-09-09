@@ -1,4 +1,4 @@
-clear,figure(1),clf,colormap jet,addpath ../,addpath ../Utilities/
+clear,figure(1),clf,colormap jet,addpath ../,addpath ../Utilities/ ../Solutions/ ../EOS/
 clear,colormap jet
 runname  = 'soapstone_2022_02_14_n1500_nz15_full'; 
 load(['linprog_run_' runname]);                                          % load linprog run data

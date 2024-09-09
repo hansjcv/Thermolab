@@ -1,4 +1,4 @@
-clear,addpath ..\ ..\Solutions\ ..\Utilities\
+clear,addpath ..\ ..\Solutions\ ..\Utilities\ ..\EOS
 run_name = 'soapstone_2022_02_14_n500_nz15_full_0_5kb';
 T = 300 + 273.15;
 P = 0.5e8;

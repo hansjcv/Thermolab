@@ -1,4 +1,4 @@
-clear,clf,addpath ../
+clear,clf,addpath ../ ../EOS
 T   = [400 500 600]+273.15;
 P   = linspace(0.001,3.5,500)*1e9;
 linesym  = {'-b','-r','-g','-c'};

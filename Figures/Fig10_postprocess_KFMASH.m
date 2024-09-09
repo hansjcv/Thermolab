@@ -1,4 +1,4 @@
-clear,addpath ../ ../Utilities/
+clear,addpath ../ ../Utilities/ ../EOS
 runname = 'KFMASH_2022_03_06_10x11';
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm = molmass_fun(Cname);
