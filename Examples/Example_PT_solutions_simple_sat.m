@@ -1,8 +1,8 @@
 clear,clf,addpath ../ ../EOS ../Solutions ../Utilities
 runname  = 'test';
 lp_run   = 1;
-T        = linspace(300,800,55) + 273.15;
-P        = linspace(0.1,3.5,56)*1e9;
+T        = linspace(300,800,15) + 273.15;
+P        = linspace(0.1,3.5,16)*1e9;
 Cname    = {'SiO2','FeO','MgO' ,'H2O'};
 molm     = molmass_oxy(Cname);
 Nsys     = [34   , 3     45  , 31];

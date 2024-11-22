@@ -7,19 +7,24 @@ delP     = 1e5;                                                          % for n
 [alph,Npc,p_out,pc_id] = cluster_p(alph,Npc,p,pc_id,solv_tol,phases);    % Compute exsolved, or numerically equivalent phases 
 % For numerical derivatives
 [rho_w_dP,eps_w_dP] = water_props(T,P+delP,phases,feos,eps_model);     % Calculate density of water
+% [rho_w_dP0,eps_w_dP0] = water_props(T,P-delP,phases,feos,eps_model);     % Calculate density of water
 [rho_w,eps_w]       = water_props(T,P,phases,feos,eps_model);     % Calculate density of water
 [g0,v0]         = tl_g0(T,P,td,rho_w,eps_w); % Calculate endmember Gibbs energies of each solution
 [g0_dP,v0_dP]   = tl_g0(T,P+delP,td,rho_w_dP,eps_w_dP);% Calculate endmember Gibbs energies of each solution at P+dP
+% [g0_dP0,v0_dP0] = tl_g0(T,P-delP,td,rho_w_dP,eps_w_dP);% Calculate endmember Gibbs energies of each solution at P-dP
 g               = tl_gibbs_energy(T,P     ,phases,td,p_out,g0    ,v0    ,rho_w    ,eps_w);            % get Gibbs energy at P
 g_P             = tl_gibbs_energy(T,P+delP,phases,td,p_out,g0_dP ,v0_dP ,rho_w_dP ,eps_w_dP);% get Gibbs energy at P+dP
+% g_dP0           = tl_gibbs_energy(T,P-delP,phases,td,p_out,g0_dP0,v0_dP0,rho_w_dP0,eps_w_dP0);% get Gibbs energy at P-dP
 % Postprocessing
 Vmol  = (g_P - g)/delP;                                                  % Equation 44
+% Vmol2 = (g  - g_dP0)/delP;                                               % Equation 44
 Mmol  = Npc'*molm;                                                        % Equation 45
 rho   = Mmol./Vmol;                                                       % Equation 46
 phim  = alph/sum(alph);                                                   % phi mol
 phi   = phim.*Vmol./(Vmol'*phim);                                         % Equation 47
 phiw  = phim.*Mmol./(Mmol'*phim);                                         % Equation 48
 Cwt   = Npc.*repmat(molm,1,size(Npc,2))./repmat(Mmol',size(Npc,1),1);     % Equation 49
+% compr = -1./Vmol.*(Vmol-Vmol2)/(delP);
 % Chemical potential
 stable_phases = phases(pc_id);
 cnt = 0;

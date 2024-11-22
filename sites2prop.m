@@ -15,7 +15,7 @@ end
 ieq_indep(ieq_indep<0) = [];
 site_var             = ieq_indep(2:end) - 1; % Find independent site variable index (this assumes first equation is sum(p)=1)
 p_from_z_cons        = inv(eqns);              % Proportion from site fraction matrix
-if length(ieq_indep) == 1
+if isscalar(ieq_indep)
     cons = [];
 else
     cons = 1;

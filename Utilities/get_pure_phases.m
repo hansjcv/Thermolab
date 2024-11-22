@@ -51,9 +51,17 @@ if is_gas == 0,exc_id = [exc_id, gas_id]; end
 if is_liq == 0,exc_id = [exc_id, liq_id]; end
 phases(exc_id) = [];
 nphs(exc_id,:) = [];
-for i_c = 1:length(Cname)
-    c_ind(i_c) = find(strcmp(elements,Cname(i_c)));
-end
-c_excl        = ones(1,length(elements));
-c_excl(c_ind) = 0;
-phases = phases(sum(abs(nphs(:,c_excl==1)),2)==0&sum(abs(nphs(:,c_excl==0)),2)>0);
+% for i_c = 1:length(Cname)
+%     c_ind(i_c) = find(strcmp(elements,Cname(i_c)));
+% end
+% c_excl        = ones(1,length(elements));
+% c_excl(c_ind) = 0;
+% phases = phases(sum(abs(nphs(:,c_excl==1)),2)==0&sum(abs(nphs(:,c_excl==0)),2)>0);
+c_ind = find_c_ind(Cname,elements);
+    if sum(c_ind>0)==0
+        Cname_oxide = Cname;
+        [~,Cname] = Oxidemol2Elementalmol(Cname_oxide,zeros(size(Cname_oxide)));
+        c_ind = find_c_ind(Cname,elements);
+    end
+inc_phs_id  = sum(nphs(:,c_ind==-1),2)==0;
+phases      = phases(inc_phs_id);
