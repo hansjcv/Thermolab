@@ -2,7 +2,7 @@ clear,clf,addpath ..\ ..\Solutions\ ..\Utilities\ ..\EOS
 run_name = 'ternary_NaCl_KCl_H2O_573K';
 load(['linprog_run_' run_name]);       
 molm      = molmass_fun(Cname);
-solv_tol  = 0.1;
+solv_tol  = 0.5;
 fluid     = phs_name(1);%for feldspar use empty: ''
 Cf        = zeros(length(X1_nd(:)),length(Cname));
 Cs        = zeros(length(X1_nd(:)),length(Cname));

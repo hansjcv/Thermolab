@@ -1,6 +1,6 @@
 clear,figure(1),clf,colormap jet,addpath ../,addpath ../Utilities/ ../Solutions/ ../EOS/
 clear,colormap jet
-runname  = 'soapstone_2022_02_14_n500_nz15_full_0_5kb'; 
+runname  = 'soapstone_2022_02_14_n1500_nz15_full'; 
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm      = molmass_fun(Cname);
 solv_tol  = 100;
@@ -11,7 +11,7 @@ for iPT = 1:length(T2d(:))
     solid_id             =   ~strcmp(phs_name(pc_id),fluid);
     cwt_solid(:,iPT)     = Cwt(:,solid_id)*phiw(solid_id)/sum(Cwt(:,solid_id)*phiw(solid_id));
     cwt_fluid(:,iPT)     = Cwt(:,fluid_id)*phiw(fluid_id)/sum(Cwt(:,fluid_id)*phiw(fluid_id));  
-    mu_tab(:,iPT)        = mu{fluid_id}(1);
+    mu_tab(:,iPT)        = mu{fluid_id}{1}(1);
     rhos_tab(iPT)        = rho(solid_id)'*phi(solid_id)/sum(phi(solid_id));
     rhof_tab(iPT)        = rho(fluid_id)'*phi(fluid_id)/sum(phi(fluid_id));      
     phs_modes(iPT,pc_id) = phi;
