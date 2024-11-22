@@ -15,16 +15,17 @@ else
     end
 end
 if exist('Cname','var')
-    for i_c = 1:length(elements)
-        c_curr = find(strcmp(Cname,elements(i_c)));
-        if ~isempty(c_curr)
-            c_ind(i_c) = c_curr;
-        else
-            c_ind(i_c) = -1;
-        end
+    c_ind = find_c_ind(Cname,elements);
+    oxide_flag = 0;
+    if sum(c_ind>0)==0
+        Cname_oxide = Cname;
+        [~,Cname] = Oxidemol2Elementalmol(Cname_oxide,zeros(size(Cname_oxide)));
+        c_ind = find_c_ind(Cname,elements);
+        oxide_flag = 1;
     end
 else
     c_ind = 1:length(elements);
+    oxide_flag = 0;
 end
 for i_sol = 1:length(mineral)
     Nphs = []; chg =[];p_id = []; em_data = [];dGex = []; CEOS = []; EOS = []; mcoef = []; Gref = [];w=[];alp=[];
@@ -102,7 +103,7 @@ for i_sol = 1:length(mineral)
         subdtype  = 1;
     end
     for k = 1:length(p_name)
-        ip  = find(strcmp(phs_names,p_name(k)));                 % Find index of the endmember in the list
+        ip  = find(strcmp(phs_names,p_name(k)));                 % Find index of the endmember in the list                    
         Nphs(k,:) = make_coeff(ip)*nphs(ip,:);
         chg(k)    = make_coeff(ip)*nphs(ip,strcmp(elements,'e'));
         p_id{k} = ip;
@@ -130,7 +131,7 @@ for i_sol = 1:length(mineral)
         z_name = [];
         z_fac  = [];
     end
-    if sum(c_ind==-1)>0
+    if sum(c_ind==-1)>0   
         inc_phs_id  = sum(Nphs(:,c_ind==-1),2)==0;
         p_id   = p_id(inc_phs_id);
         p_name = p_name(inc_phs_id);
@@ -164,9 +165,15 @@ for i_sol = 1:length(mineral)
         rho_w_m(~inc_phs_id) = [];
         dielec_w_m(~inc_phs_id) = [];
     end
-
     n_em = zeros(size(Nphs,1),sum(c_ind~=-1));
     n_em(:,c_ind(c_ind~=-1))    = Nphs(:,c_ind~=-1);
+    if oxide_flag == 1
+        n_em_ox= zeros(size(Nphs,1),numel(Cname_oxide));
+        for i_em = 1:size(n_em,1)
+            n_em_ox(i_em,:) = Elementalmol2Oxidemol(Cname,n_em(i_em,:));
+        end
+        n_em = n_em_ox;
+    end    
     w(:,:,1) = w0;
     w(:,:,2) = wT;
     w(:,:,3) = wP;
@@ -192,6 +199,7 @@ for i_sol = 1:length(mineral)
         z_fac = [];
         z_name = [];
     end
+
     td(i_sol).p_id    = p_id;
     td(i_sol).st      = st;
     td(i_sol).site_id = site_id;
