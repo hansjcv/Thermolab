@@ -1,4 +1,4 @@
-function disp_reactions(phases,v)
+function reaction_string = disp_reactions(phases,v)
 n_react = size(v,2);
 for i_react = 1:n_react
     reactants             = phases(v(:,i_react)<0);
