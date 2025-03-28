@@ -21,7 +21,7 @@ p_it    = cell(1,length(phs_name));
 td_ini  = td;
 gmin_old = 1e10;
 for i_ref = 1:nref       
-    [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di);
+    [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di);    
     LB            = zeros(1,size(g,1));    
     Npc(Npc<1e-14&Npc>-1e-14)      =  0;
     if options.solver == 1
@@ -31,6 +31,8 @@ for i_ref = 1:nref
     elseif options.solver == 2
         [alph,gmin,exitflag(i_ref)] = opti_clp([],g,Npc,Nsys,Nsys,LB);    
     else
+        % g = g-g(pc_id==find(strcmp(phs_name,'q,tc-ds55')),:).*Npc(1,:)';
+        % [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc(2:end,:),Nsys(2:end),LB,[],optimset('Display','off'));            
         [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display','off'));    
     end    
     if exitflag(i_ref) ~= 1,break,end

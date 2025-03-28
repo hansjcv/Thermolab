@@ -37,9 +37,9 @@ elseif eos == 5
             rho_kgm3(:,k)        = molarmass*rho_w;
             [~,~,~,lnf]          = PS94(rho_w,T,phs_id);
             VdPall(:,k)          = 8.314462*lnf(:).*T(:);
-            gH2O(:,k)            = Gr - SdT + VdPall(:,k);
-            gH2O(rho_w<0,k)      = 1000;
-            gH2O(isnan(rho_w),k) = 1000;
+            gH2O(:,k)            = 0*Gr - 0*SdT + VdPall(:,k);
+            gH2O(rho_w<0,k)      = 1000000;
+            gH2O(isnan(rho_w),k) = 1000000;
         end
         % Find minimum
         [~,id] = min(gH2O,[],2);

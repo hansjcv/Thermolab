@@ -1,7 +1,6 @@
 function [gam,a_w] = gam_HKF(T,z,chg,rho_w,eps_di)
 rho_w_gcm3 = rho_w/1e3;
 % HKF
-R     = 8.3145;
 a0    = 4.5e-8; % a0    = 3.72e-8; % Angstrom a0 parameter, fixed now
 b_gam = 0.03; % fixed b gamma parameter also used in neutral species
 nu    = 2; % stoichiometric coefficient of charged species in the fluid

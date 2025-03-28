@@ -1,6 +1,6 @@
 function [g0,v0,s0] = tl_g0(T,P,td,rho_w,eps_di,Gapp)
-if ~exist('rho_w','var'),[rho_w,eps_di] = water_props(T,P,'H2O,tc-ds55');end     
-if ~exist('eps_di','var'),[rho_w,eps_di] = water_props(T,P,'H2O,tc-ds55'); end
+if ~exist('rho_w','var'),[rho_w,eps_di] = water_props(T,P,{td.phase_name});end     
+if ~exist('eps_di','var'),[rho_w,eps_di] = water_props(T,P,{td.phase_name}); end
 if ~exist('Gapp','var'),Gapp = 0;end
 for i_sol = 1:numel(td)
     em_data = td(i_sol).em_data;CEOS = td(i_sol).CEOS;EOS = td(i_sol).EOS;dGex = td(i_sol).dGex;Gr = td(i_sol).Gref;mcoef = td(i_sol).mcoef;dHf = td(i_sol).dHf;
