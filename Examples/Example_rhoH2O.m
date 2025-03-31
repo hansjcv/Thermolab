@@ -7,5 +7,5 @@ g     = tl_gibbs_energy(Temp(:),Pres(:),phase);
 [rho_w,eps_di] = water_props(Temp(:),Pres(:),phase);
 td = init_thermo(phase);
 g0     = tl_g0(Temp(:),Pres(:),td,rho_w,eps_di);
-colormap gray,contourf(Temp-273.15,Pres/1e9,reshape(rho_w,length(T),length(P)),30);colorbar,shading interp
+colormap jet,contourf(Temp-273.15,Pres/1e9,reshape(rho_w,length(T),length(P)),30);colorbar,shading interp
 xlabel('T(\circC)'),ylabel('P(GPa)'),title('density of H_2O')
