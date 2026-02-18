@@ -1,0 +1,529 @@
+#
+ ====================================================================
+ The 'metabasite set' of a-x relations in NCKFMASHTO.
+
+ checked and uploaded 13-12-2019 by ecrg
+ (see 0_version_notes.txt)
+
+ Use with:
+   - tc-ds62.txt
+   - tc350 and above
+
+ File originally assembled by E.C.R. Green 27 May 2016
+ as tc-6axNCKFMASHTOm45.txt
+
+ Reformatted by E.C.R. Green 21 October 2019, 1 Dec 2019.
+ - corrects error in san end-member in I-bar1 plagioclase (pli)
+ - delG(tran) for mat end-member in muscovite was routinely
+   changed to 5.0 kJ from 6.5 kJ from around 2015; this change
+   is formalised here.
+ - uses Mn-free versions of metapelite set xeos
+ - removes P-dependence of Ws in garnet for consistency
+   with metapelite models
+ - renamed pl as plc for consistency; rename via
+   samecoding for convenience
+
+ Coding for L (tonalitic 'metabasite' melt),
+	     hb (+ act, gl via samecoding script),
+            aug, dio (+ o, jd via samecoding),
+            opx, g, ol, ksp, pl, pli, sp (+ mt),
+            ilm (+ hem), ilmm (+ hemm), ep, bi, mu, chl
+
+ N.B. please read the README file in this distribution
+      before using these a-x relations.
+
+ ====================================================================
+#
+#
+ =================================================================
+ clinoamphibole: NCKFMASHTO
+
+ Green, ECR, White, RW, Diener, JFA, Powell, R, Holland, TJB &
+ Palin, RM (2016). Activity-composition relations for the calculation
+ of partial melting equilibria in metabasic rocks.
+ Journal of Metamorphic Geology, 34, 845-869.
+
+ E-m  Formula                                         Mixing sites
+                              A          M13     M2                M4            T1*      V
+                              v  Na K    Mg Fe   Mg Fe Al Fe3 Ti   Ca Mg Fe Na   Si Al   OH O
+ tr   Ca2Mg5Si8O22(OH)2       1  0  0    3  0    2  0  0   0  0    2  0  0  0    4  0    2  0  tremolite
+ tsm  Ca2Mg3Al4Si6O22(OH)2    1  0  0    3  0    0  0  2   0  0    2  0  0  0    2  2    2  0  tschermakite
+ prgm NaCa2Mg4Al3Si6O22(OH)2  0  1  0    3  0    1  0  1   0  0    2  0  0  0    2  2    2  0  pargasite
+ glm  Na2Mg3Al2Si8O22(OH)2    1  0  0    3  0    0  0  2   0  0    0  0  0  2    4  0    2  0  glaucophane
+ cumm Mg7Si8O22(OH)2          1  0  0    3  0    2  0  0   0  0    0  2  0  0    4  0    2  0  cummingtonite
+ grnm Fe7Si8O22(OH)2          1  0  0    0  3    0  2  0   0  0    0  0  2  0    4  0    2  0  grunerite
+ a    Mg3Fe4Si8O22(OH)2       1  0  0    3  0    0  2  0   0  0    0  0  2  0    4  0    2  0  - ordered
+ b    Mg2Fe5Si8O22(OH)2       1  0  0    0  3    2  0  0   0  0    0  0  2  0    4  0    2  0  - ordered
+ mrb  Na2Mg3Fe2Si8O22(OH)2    1  0  0    3  0    0  0  0   2  0    0  0  0  2    4  0    2  0  magnesio-riebekite
+ kprg KCa2Mg4Al3Si6O22(OH)2   0  0  1    3  0    1  0  1   0  0    2  0  0  0    2  2    2  0  K-pargasite
+ tts  Ca2Mg3Al2Ti2Si6O24      1  0  0    3  0    0  0  0   0  2    2  0  0  0    2  2    0  2  Ti-tschermakite
+ *use 1/4 entropy of mixing from T-site
+
+ There is little information with which to estimate delH^formation for
+ any of these end-members in the Holland & Powell dataset. The dataset
+ value for the end-member tr is assumed to be correct, while the values
+ for the other end-members are calibrated relative to this during a-x
+ calibration.
+
+ x -> (3 xFeM13 + 2 xFeM2 + 2 xFeM4)/(3 xFeM13 + 2 xFeM2 + 2 xFeM4 + 3 xMgM13 + 2 xMgM2 + 2 xMgM4)
+ y -> xAlM2
+ z -> xNaM4
+ a -> xKA + xNaA
+ k -> xKA/(xKA + xNaA)
+ c -> xCaM4
+ f -> xFe3M2
+ t -> xTiM2
+ Q1 -> x - xFeM13/(xFeM13 + xMgM13)  - order variable
+ Q2 -> x - xFeM2/(xFeM2 + xMgM2)     - order variable
+ --------------------------------------------------
+#
+
+ starting guesses
+  x(hb) = 0.41366
+  y(hb) = 0.60575
+  z(hb) = 0.40309
+  a(hb) = 0.37821
+  k(hb) = 0.024295
+  c(hb) = 0.58757
+  f(hb) = 0.097395
+  t(hb) = 0.010267
+  Q1(hb) = -0.024764  range -1 <> 1  order variable
+  Q2(hb) = 0.14610  range -1 <> 1  order variable
+
+ site fractions
+   xvA = 1 - a
+   xNaA = a + (-a) k
+   xKA = a k
+   xMgM13 = 1 + Q1 - x
+   xFeM13 = -Q1 + x
+   xMgM2 = 1 - f + Q2 - t - x - y + (-f) Q2 + (-Q2) t + f x + t x + (-Q2) y + x y
+   xFeM2 = -Q2 + x + f Q2 + Q2 t + (-f) x + (-t) x + Q2 y + (-x) y
+   xAlM2 = y
+   xFe3M2 = f
+   xTiM2 = t
+   xCaM4 = c
+   xMgM4 = 1 - c - Q2 - x - z - 3/2 Q1 + f Q2 + Q2 t + c x + Q2 y + x z
+   xFeM4 = Q2 + x + 3/2 Q1 + (-f) Q2 + (-Q2) t + (-c) x + (-Q2) y + (-x) z
+   xNaM4 = z
+   xSiT1 = 1 - 1/2 f - 1/2 t - 1/2 y + 1/2 z - 1/4 a
+   xAlT1 = 1/2 f + 1/2 t + 1/2 y - 1/2 z + 1/4 a
+   xOHV = 1 - t
+   xOV = t
+
+ proportions
+   tr = -1/2 a + c - f - t - y + z
+   tsm = -1/2 a + f + y - z
+   prgm = a + (-a) k
+   glm = -f + z
+   cumm = 1 - c - Q2 - x - z - 3/2 Q1 + f Q2 + Q2 t + c x + Q2 y + x z
+   grnm = x - 2Q2 - 5/2 Q1 + 2f Q2 + 2Q2 t + c x + (-f) x + (-t) x + 2Q2 y + (-x) y + x z
+   a = Q2 + 5/2 Q1 + (-f) Q2 + (-Q2) t + (-c) x + (-Q2) y + (-x) z
+   b = 2Q2 + 3/2 Q1 + (-2f) Q2 + (-2Q2) t + (-c) x + f x + t x + (-2Q2) y + x y + (-x) z
+   mrb = f
+   kprg = a k
+   tts = t
+
+ ideal mixing activities
+  tr = xvA xMgM13^3 xMgM2^2 xCaM4^2 xSiT1 xOHV^2
+  tsm = 2xvA xMgM13^3 xAlM2^2 xCaM4^2 xSiT1^(1/2) xAlT1^(1/2) xOHV^2
+  prgm = 8xNaA xMgM13^3 xMgM2 xAlM2 xCaM4^2 xSiT1^(1/2) xAlT1^(1/2) xOHV^2
+  glm = xvA xMgM13^3 xAlM2^2 xNaM4^2 xSiT1 xOHV^2
+  cumm = xvA xMgM13^3 xMgM2^2 xMgM4^2 xSiT1 xOHV^2
+  grnm = xvA xFeM13^3 xFeM2^2 xFeM4^2 xSiT1 xOHV^2
+  a = xvA xMgM13^3 xFeM2^2 xFeM4^2 xSiT1 xOHV^2
+  b = xvA xFeM13^3 xMgM2^2 xFeM4^2 xSiT1 xOHV^2
+  mrb = xvA xMgM13^3 xFe3M2^2 xNaM4^2 xSiT1 xOHV^2
+  kprg = 8xKA xMgM13^3 xMgM2 xAlM2 xCaM4^2 xSiT1^(1/2) xAlT1^(1/2) xOHV^2
+  tts = 2xvA xMgM13^3 xTiM2^2 xCaM4^2 xSiT1^(1/2) xAlT1^(1/2) xOV^2
+
+ non-ideality by van laar
+  W(tr,tsm) = 20
+  W(tr,prgm) = 25
+  W(tr,glm) = 65
+  W(tr,cumm) = 45
+  W(tr,grnm) = 75
+  W(tr,a) = 57
+  W(tr,b) = 63
+  W(tr,mrb) = 52
+  W(tr,kprg) = 30
+  W(tr,tts) = 85
+  W(tsm,prgm) = -40
+  W(tsm,glm) = 25
+  W(tsm,cumm) = 70
+  W(tsm,grnm) = 80
+  W(tsm,a) = 70
+  W(tsm,b) = 72.5
+  W(tsm,mrb) = 20
+  W(tsm,kprg) = -40
+  W(tsm,tts) = 35
+  W(prgm,glm) = 50
+  W(prgm,cumm) = 90
+  W(prgm,grnm) = 106.7
+  W(prgm,a) = 94.8
+  W(prgm,b) = 94.8
+  W(prgm,mrb) = 40
+  W(prgm,kprg) = 8
+  W(prgm,tts) = 15
+  W(glm,cumm) = 100
+  W(glm,grnm) = 113.5
+  W(glm,a) = 100
+  W(glm,b) = 111.2
+  W(glm,mrb) = 0
+  W(glm,kprg) = 54
+  W(glm,tts) = 75
+  W(cumm,grnm) = 33
+  W(cumm,a) = 18
+  W(cumm,b) = 23
+  W(cumm,mrb) = 80
+  W(cumm,kprg) = 87
+  W(cumm,tts) = 100
+  W(grnm,a) = 12
+  W(grnm,b) = 8
+  W(grnm,mrb) = 91
+  W(grnm,kprg) = 96
+  W(grnm,tts) = 65
+  W(a,b) = 20
+  W(a,mrb) = 80
+  W(a,kprg) = 94
+  W(a,tts) = 95
+  W(b,mrb) = 90
+  W(b,kprg) = 94
+  W(b,tts) = 95
+  W(mrb,kprg) = 50
+  W(mrb,tts) = 50
+  W(kprg,tts) = 35
+
+  v(tr) = 1
+  v(tsm) = 1.5
+  v(prgm) = 1.7
+  v(glm) = 0.8
+  v(cumm) = 1
+  v(grnm) = 1
+  v(a) = 1
+  v(b) = 1
+  v(mrb) = 0.8
+  v(kprg) = 1.7
+  v(tts) = 1.5
+
+ "make" end-members
+  tsm = ts + 10  (mod)
+  prgm = parg - 10  (mod)
+  glm = gl - 3  (mod)
+  grnm = grun - 3  (mod)
+  a = 3/7 cumm + 4/7 grun - 11.2  (od)
+  b = 2/7 cumm + 5/7 grun - 13.8  (od)
+  mrb = gl - gr + andr
+  kprg = mu - pa + parg - 7.06 + 0.02 T  (make)
+  tts = - 2 dsp + 2 ru + ts + 95  (make)
+
+#
+ =====================================================================
+ clinopyroxene: NCFMASO
+
+ Sodic-calcic cpx with order-disorder on M1, M2.
+ Use this model for coexisting sodic-calcic, omphacitic cpx!
+
+ WARNING: No tet-site Al, unsuitable for high temperatures.
+
+ Green, ECR, White, RW, Diener, JFA, Powell, R, Holland, TJB &
+ Palin, RM (2016). Activity-composition relations for the calculation
+ of partial melting equilibria in metabasic rocks.
+ Journal of Metamorphic Geology, 34, 845-869.
+
+ E-m   Formula                                   Mixing sites
+                             M1m               M1a               M2c       M2n
+                             Mg  Fe  Fe3 Al    Mg  Fe  Fe3 Al    Na  Ca    Na  Ca
+ jd    NaAlSi2O6             0   0   0   1/2   0   0   0   1/2   1/2 0     1/2 0
+ di    CaMgSi2O6             1/2 0   0   0     1/2 0   0   0     0   1/2   0   1/2
+ hed   CaFeSi2O6             0   1/2 0   0     0   1/2 0   0     0   1/2   0   1/2
+ acmm   NaFeSi2O6            0   0   1/2 0     0   0   1/2 0     1/2 0     1/2 0
+ om    Na.5Ca.5Mg.5Al.5SiO6  1/2 0   0   0     0   0   0   1/2   0   1/2   1/2 0      - ordered intermediate
+ cfm   CaMg.5Fe.5SiO6        0   1/2 0   0     1/2 0   0   0     0   1/2   0   1/2    - ordered intermediate
+ jac   NaAl.5Fe.5SiO6        0   0   0   1/2   0   0   1/2 0     1/2 0     1/2 0      - ordered intermediate
+
+ f -> (xFe3M1a + xFe3M1m)/(xAlM1a + xAlM1m + xFe3M1a + xFe3M1m)
+ x -> (xFeM1a + xFeM1m)/(xFeM1a + xFeM1m + xMgM1a + xMgM1m)
+ j -> (xNaM2c + xNaM2n)/2
+ Q -> (xNaM2n - xNaM2c)/2                        - order variable
+ Qaf -> (xFe3M1a - xFe3M1m)/2                    - order variable
+ Qfm -> xFeM1a/(xFeM1a + xMgM1a) - x             - order variable
+ -------------------------------------------------
+#
+
+ starting guesses
+  x(dio) = 0.33199
+  j(dio) = 0.22285
+  f(dio) = 0.32704
+  Q(dio) = 0.051252  range -0.5 <> 0.5  order variable
+  Qaf(dio) = 0.012224  range -0.5 <> 0.5  order variable
+  Qfm(dio) = -0.11844  range -0.5 <> 0.5  order variable
+
+ site fractions
+   xMgM1m = 1 - j + Q + Qfm - x + (-j) Qfm + (-Q) Qfm + j x + (-Q) x
+   xFeM1m = -Qfm + x + j Qfm + Q Qfm + (-j) x + Q x
+   xFe3M1m = -Qaf + f j
+   xAlM1m = j - Q + Qaf + (-f) j
+   xMgM1a = 1 - j - Q - Qfm - x + j Qfm + Q Qfm + j x + Q x
+   xFeM1a = Qfm + x + (-j) Qfm + (-Q) Qfm + (-j) x + (-Q) x
+   xFe3M1a = Qaf + f j
+   xAlM1a = j + Q - Qaf + (-f) j
+   xNaM2c = j - Q
+   xCaM2c = 1 - j + Q
+   xNaM2n = j + Q
+   xCaM2n = 1 - j - Q
+
+ proportions
+   jd = j - Q - Qaf + (-f) j
+   di = 1 - j - Q + Qfm - x + (-j) Qfm + (-Q) Qfm + j x + (-Q) x
+   hed = Qfm + x + (-j) Qfm + (-Q) Qfm + (-j) x + (-Q) x
+   acmm = -Qaf + f j
+   om = 2Q
+   cfm = -2Qfm + 2j Qfm + 2Q Qfm + 2Q x
+   jac = 2Qaf
+
+ ideal mixing activities
+  jd = xAlM1m^(1/2) xAlM1a^(1/2) xNaM2c^(1/2) xNaM2n^(1/2)
+  di = xMgM1m^(1/2) xMgM1a^(1/2) xCaM2c^(1/2) xCaM2n^(1/2)
+  hed = xFeM1m^(1/2) xFeM1a^(1/2) xCaM2c^(1/2) xCaM2n^(1/2)
+  acmm = xFe3M1m^(1/2) xFe3M1a^(1/2) xNaM2c^(1/2) xNaM2n^(1/2)
+  om = xMgM1m^(1/2) xAlM1a^(1/2) xCaM2c^(1/2) xNaM2n^(1/2)
+  cfm = xFeM1m^(1/2) xMgM1a^(1/2) xCaM2c^(1/2) xCaM2n^(1/2)
+  jac = xAlM1m^(1/2) xFe3M1a^(1/2) xNaM2c^(1/2) xNaM2n^(1/2)
+
+ non-ideality by symmetric formalism
+  W(jd,di) = 26
+  W(jd,hed) = 24
+  W(jd,acmm) = 5
+  W(jd,om) = 15.5
+  W(jd,cfm) = 25.2
+  W(jd,jac) = 3
+  W(di,hed) = 4
+  W(di,acmm) = 21
+  W(di,om) = 15.75
+  W(di,cfm) = 2
+  W(di,jac) = 24.65
+  W(hed,acmm) = 20.8
+  W(hed,om) = 17.2
+  W(hed,cfm) = 2
+  W(hed,jac) = 24.6
+  W(acmm,om) = 16.4
+  W(acmm,cfm) = 22.2
+  W(acmm,jac) = 3
+  W(om,cfm) = 18.45
+  W(om,jac) = 19.5
+  W(cfm,jac) = 24.55
+
+ "make" end-members
+  acmm = acm - 7  (mod)
+  om = 1/2 jd + 1/2 di - 2.9  (od)
+  cfm = 1/2 di + 1/2 hed - 1.5  (od)
+  jac = 1/2 jd + 1/2 acm - 4.5  (od)
+
+#
+ =================================================================
+ garnet: CFMASO
+
+ White, RW, Powell, R, Holland, TJB, Johnson, TE &
+ Green, ECR (2014). New mineral activity-composition relations
+ for thermodynamic calculations in metapelitic systems.
+ Journal of Metamorphic Geology, 32, 261-286.
+
+ coded by axe attack on 24 March 2011
+ manually inserted P dependence on 5-5-14
+
+ E-m    Formula                   Mixing sites
+                       X                         Y
+                       Mg    Fe    Ca      Al    Fe3
+ py     Mg3Al2Si3O12   3     0     0       2     0
+ alm    Fe3Al2Si3O12   0     3     0       2     0
+ gr     Ca3Al2Si3O12   0     0     3       2     0
+ kho    Mg3Fe2Si3O12   3     0     0       0     2
+
+ x -> xFeX/(xFeX + xMgX)
+ z -> xCaX
+ f -> xFe3Y
+ -------------------------------------------------
+#
+
+ starting guesses
+  x(g) = 0.79003
+  z(g) = 0.35454
+  f(g) = 0.033962
+
+ site fractions
+   xMgX = 1 - x - z + x z
+   xFeX = x + (-x) z
+   xCaX = z
+   xAlY = 1 - f
+   xFe3Y = f
+
+ proportions
+   py = 1 - f - x - z + x z
+   alm = x + (-x) z
+   gr = z
+   kho = f
+
+ ideal mixing activities
+  py = xMgX^3 xAlY^2
+  alm = xFeX^3 xAlY^2
+  gr = xCaX^3 xAlY^2
+  kho = xMgX^3 xFe3Y^2
+
+ non-ideality by van laar
+  W(py,alm) = 2.5
+  W(py,gr) = 31
+  W(py,kho) = 5.4
+  W(alm,gr) = 5
+  W(alm,kho) = 22.6
+  W(gr,kho) = -15.3
+
+  v(py) = 1
+  v(alm) = 1
+  v(gr) = 2.7
+  v(kho) = 1
+
+ "make" end-members
+  kho = py - gr + andr + 27  (make)
+
+#
+ =================================================================
+ epidote: CFASHO
+
+ Holland, TJB & Powell, R (2011). An improved and
+ extended internally consistent thermodynamic dataset
+ for phases of petrological interest, involving a
+ new equation of state for solids.
+ Journal of Metamorphic Geology, 29, 333-383.
+
+ E-m   Formula                Mixing sites
+                             M1       M3
+                             Al Fe3   Al Fe3
+ cz    Ca2Al3Si3O12(OH)      1   0    1   0
+ ep    Ca2FeAl2Si3O12(OH)    1   0    0   1  - ordered end-member
+ fep   Ca2Fe2AlSi3O12(OH)    0   1    0   1
+
+ f -> (xFe3M1+xFe3M3)/2
+ Q ->  f - xFe3M1   - order variable
+ --------------------------------------------------
+#
+
+ starting guesses
+  f(ep) = 0.18943
+  Q(ep) = 0.18211  range 0 <> 0.5  order variable
+
+ site fractions
+   xFeM1 = f - Q
+   xAlM1 = 1 - f + Q
+   xFeM3 = f + Q
+   xAlM3 = 1 - f - Q
+
+ proportions
+   cz = 1 - f - Q
+   ep = 2Q
+   fep = f - Q
+
+ ideal mixing activities
+  cz = xAlM1 xAlM3
+  ep = xAlM1 xFeM3
+  fep = xFeM1 xFeM3
+
+ non-ideality by symmetric formalism
+  W(cz,ep) = 1
+  W(cz,fep) = 3
+  W(ep,fep) = 1
+
+#
+ =================================================================
+ muscovite: NCKFMASHO
+
+ White, RW, Powell, R, Holland, TJB, Johnson, TE &
+ Green, ECR (2014). New mineral activity-composition relations
+ for thermodynamic calculations in metapelitic systems.
+ Journal of Metamorphic Geology, 32, 261-286.
+
+ !!!! delG(tran) for mat end-member changed from 6.5 to 5.0 since publication !!!!
+
+ coded by axe attack on 14 August 2013
+
+
+  E-m    Formula                                    Mixing sites
+                             A                   M2A                 M2B           T1
+                             K     Na    Ca      Mg    Fe    Al      Al    Fe3     Si    Al
+  mu    KAl3Si3O12(OH)2      1     0     0       0     0     1       1     0       1     1
+  cel   KMgAlSi4O10(OH)2     1     0     0       1     0     0       1     0       2     0
+  fcel  KFeAlSi4O10(OH)2     1     0     0       0     1     0       1     0       2     0
+  pa    NaAl3Si3O10(OH)2     0     1     0       0     0     1       1     0       1     1
+  mam   CaAl4Si2O10(OH)2     0     0     1       0     0     1       1     0       0     2
+  fmu   KAl2FeSi3O12(OH)2    1     0     0       0     0     1       0     1       1     1
+
+ x -> xFeM2A/(xFeM2A + xMgM2A)
+ y -> xAlM2A
+ f -> xFe3M2B
+ n -> xNaA
+ c -> xCaA
+ --------------------------------------------------
+#
+
+ starting guesses
+  x(mu) = 0.27572
+  y(mu) = 0.33473
+  f(mu) = 0.016486
+  n(mu) = 0.0022662
+  c(mu) = 3.3676e-5
+
+ site fractions
+   xKA = 1 - c - n
+   xNaA = n
+   xCaA = c
+   xMgM2A = 1 - x - y + x y
+   xFeM2A = x + (-x) y
+   xAlM2A = y
+   xAlM2B = 1 - f
+   xFe3M2B = f
+   xSiT1 = 1 - 1/2 c - 1/2 y
+   xAlT1 = 1/2 c + 1/2 y
+
+ proportions
+   mu = -c - f - n + y
+   cel = 1 - x - y + x y
+   fcel = x + (-x) y
+   pa = n
+   mam = c
+   fmu = f
+
+ ideal mixing activities
+  mu = 4xKA xAlM2A xAlM2B xSiT1 xAlT1
+  cel = xKA xMgM2A xAlM2B xSiT1^2
+  fcel = xKA xFeM2A xAlM2B xSiT1^2
+  pa = 4xNaA xAlM2A xAlM2B xSiT1 xAlT1
+  mam = xCaA xAlM2A xAlM2B xAlT1^2
+  fmu = 4xKA xAlM2A xFe3M2B xSiT1 xAlT1
+
+ non-ideality by van laar
+  W(mu,cel) = 0 + 0.2 P
+  W(mu,fcel) = 0 + 0.2 P
+  W(mu,pa) = 10.12 + 0.0034 T + 0.353 P
+  W(mu,mam) = 35
+  W(mu,fmu) = 0
+  W(cel,fcel) = 0
+  W(cel,pa) = 45 + 0.25 P
+  W(cel,mam) = 50
+  W(cel,fmu) = 0
+  W(fcel,pa) = 45 + 0.25 P
+  W(fcel,mam) = 50
+  W(fcel,fmu) = 0
+  W(pa,mam) = 15
+  W(pa,fmu) = 30
+  W(mam,fmu) = 35
+
+  v(mu) = 0.63
+  v(cel) = 0.63
+  v(fcel) = 0.63
+  v(pa) = 0.37
+  v(mam) = 0.63
+  v(fmu) = 0.63
+
+ "make" end-members
+  mam = ma + 5  (mod)
+  fmu = 1/2 andr - 1/2 gr + mu + 25  (make)
+

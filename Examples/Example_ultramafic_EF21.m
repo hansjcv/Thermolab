@@ -3,7 +3,7 @@ run_name = 'EF21_red';
 T      = linspace(300,850,20) + 273.15;
 P      = linspace(0.5,4.0,21)*1e9;
 solmod = 'solution_models_EF21';
-ngrid    = 1; % number of P-T grid refinements, each time, the P-T grid resolution is doubled.
+ngrid    = 4; % number of P-T grid refinements, each time, the P-T grid resolution is doubled.
 eps_solv = 1;
 Cname   = {'Si'   ,'Al'   ,'Mg', 'Fe',  'S', 'H','O'  };
 A       = [1        0       0    0       0    0    2
@@ -22,7 +22,7 @@ Nsys      = Nsys_oxi*A;
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
 phs_name = {'Antigorite','Brucite','Olivine','Orthopyroxene','Talc','Spinel','Chlorite','Garnet','Fluid','Pyrrhotite','Clinohumite','pyr,tc-ds633','anth,tc-ds633'};
 td       = init_thermo(phs_name,Cname,solmod);
-for i = 1:length(phs_name),td(i).dz(:) = 1/4;end
+for i = 1:length(phs_name),td(i).nc(:) = 4;end
 p         = props_generate(td);     % generate endmember proportions
 refine_id = ones(length(T)*length(P),1);
 % Minimization refinement

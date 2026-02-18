@@ -1,6 +1,6 @@
 function [p,z_indep] = props_generate(td)
 for i_sol = 1:length(td)
-    z_indep{i_sol}  = auto_xgrid(td(i_sol).z_lim,td(i_sol).dz,td(i_sol).subdtype);
+    z_indep{i_sol}  = auto_xgrid(td(i_sol).z_lim,td(i_sol).nc,td(i_sol).subdtype);
     if isempty(td(i_sol).site_var)
         p{i_sol} = 1;
     else
@@ -8,48 +8,61 @@ for i_sol = 1:length(td)
     end
 end
 end
-function [x_arr,x] = auto_xgrid(x_in,dc,subd_type)
+function [x_arr,x] = auto_xgrid(x_in,nc,subd_type)
 if ~isempty(x_in)    
     if nargin < 3
         subd_type = zeros(1,size(x_in,2));
     end
     nvar = size(x_in,2);
-    if length(dc) == 1
-        dc = ones(1,nvar)*dc;
+    if isscalar(nc)
+        nc = ones(1,nvar)*nc;
     end
     for i = 1:size(x_in,2)
-        nc(i) = fix((x_in(2,i)-x_in(1,i))/dc(i)+1);
         if subd_type(i) ==1
-            x_in(:,i) = log10(x_in(:,i)+double(x_in(:,i)==0)*1e-16);
+            x_in(:,i) = log10(x_in(:,i)+double(x_in(:,i)==0));
         end
     end
-    ngrid = '[';
+    n_grid = '[';
     for i_var = 1:nvar
         if i_var<nvar
-            ngrid = [ngrid 'x' num2str(i_var) ','];
+            n_grid = [n_grid 'x' num2str(i_var) ','];
         else
-            ngrid = [ngrid 'x' num2str(i_var) '] = ndgrid('];
+            n_grid = [n_grid 'x' num2str(i_var) '] = ndgrid('];
         end
     end
     ngrid_arr = 'x_arr = [';
     for i_var = 1:nvar
         if i_var<nvar
             if subd_type(i_var) == 0
-                ngrid = [ngrid 'linspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')),'];
+                n_grid = [n_grid 'linspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')),'];
             elseif subd_type(i_var) == 1
-                ngrid = [ngrid 'logspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')),'];
+                if x_in(1,i_var)==0
+                    x_in(1,i_var) = -16;
+                    n_grid = [n_grid '[0,logspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) '))],'];
+                else
+                    n_grid = [n_grid 'logspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')),'];
+                end
+            elseif subd_type(i_var) > 1
+                n_grid = [n_grid 'linspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')).^' num2str(subd_type(i_var)) ','];
             end
             ngrid_arr = [ngrid_arr 'x' num2str(i_var) '(:),'];
         else
             if subd_type(i_var) == 0
-                ngrid = [ngrid 'linspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')));'];
+                n_grid = [n_grid 'linspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')));'];
             elseif subd_type(i_var) == 1
-                ngrid = [ngrid 'logspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')));'];
+                if x_in(1,i_var)==0
+                    x_in(1,i_var) = -16;
+                    n_grid = [n_grid '[0,logspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) '))]);'];
+                else
+                    n_grid = [n_grid 'logspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')));'];
+                end
+            elseif subd_type(i_var) > 1 
+                n_grid = [n_grid 'linspace(x_in(1,' num2str(i_var) '),x_in(2,' num2str(i_var) '),nc(' num2str(i_var) ')).^' num2str(subd_type(i_var)) ');'];
             end
             ngrid_arr = [ngrid_arr 'x' num2str(i_var) '(:)];'];
         end
     end
-    eval(ngrid);
+    eval(n_grid);
     eval(ngrid_arr);
     for i_var = 1:nvar
         x{i_var} = eval(['x' num2str(i_var) ';']);

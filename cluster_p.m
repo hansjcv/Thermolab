@@ -6,8 +6,7 @@ for ip = 1:length(phs_id)
     pc_id = pc_id_in(pc_id_in==ip);
     out  = 0;
     while out == 0
-        i_stab = find(alph>0);
-%         X_stab = Npc(:,alph>0);
+        i_stab = find(alph>0);        
         X_stab = p(alph>0,:)';
         nst    = size(X_stab,2);
         if nst > 1

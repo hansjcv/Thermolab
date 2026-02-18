@@ -51,14 +51,17 @@ for i_sol = 1:length(phase)
     g_mech = p{i_sol}*g0{i_sol}';                                                                 % Mechanical
     Sconf =   8.3144*sum(mtpl.*(z.*log(z+double(z==0))- p{i_sol}*(zt.*log(zt+double(zt==0)))),2); % Configurational Entropy
     for iPT = 1:length(T)
-        g_id     = T(iPT)*Sconf;                           % Ideal mixing
-        g_nid    = gnid(T(iPT),P(iPT),p{i_sol},mod_id,v0{i_sol}(iPT,:),alp,w,rho_w(iPT,i_sol),eps_di(iPT,i_sol),chg);   % Non-ideal
-        g{i_sol}(:,iPT) = g_mech(:,iPT) + g_id + g_nid; % Gibbs energy in Joule/mol
+        g_id{i_sol}     = T(iPT)*Sconf;                           % Ideal mixing
+        g_nid{i_sol}    = gnid(T(iPT),P(iPT),p{i_sol},mod_id,v0{i_sol}(iPT,:),alp,w,rho_w(iPT,i_sol),eps_di(iPT,i_sol),chg);   % Non-ideal
+        g{i_sol}(:,iPT) = g_mech(:,iPT) + g_id{i_sol} + g_nid{i_sol}; % Gibbs energy in Joule/mol
     end
     Npc{i_sol}   = p{i_sol}*n_em;
     pc_id{i_sol} = ones(1,size(p{i_sol},1))*i_sol;
+    
 end
 g     = cell2mat(g');
+g_id  = cell2mat(g_id');
+g_nid = cell2mat(g_nid');
 Npc   = cell2mat(Npc')';
 pc_id = cell2mat(pc_id);
 end

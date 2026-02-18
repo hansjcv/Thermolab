@@ -41,10 +41,24 @@ switch db_name
         aq_id  = 1:length(phases);
         liq_id = [];
         gas_id = [];
+    case 'supcrt-extra'
+        aq_id  = 1:length(phases);
+        liq_id = [];
+        gas_id = [];
+    case 'supcrt-mingas'
+        phases = phases(1:215);
+        nphs   = nphs(1:215,:);
+        aq_id  = [];
+        liq_id = [];
+        gas_id = 195:215;
     case 'Miron'
         aq_id  = 1:length(phases);
         liq_id = [];
         gas_id = [];
+    case 'Barton82'        
+        liq_id = [];
+        gas_id = 4:5;
+        aq_id  = [];            
 end
 if is_aq == 0, exc_id = [exc_id, aq_id]; end
 if is_gas == 0,exc_id = [exc_id, gas_id]; end
