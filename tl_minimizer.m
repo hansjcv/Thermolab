@@ -11,8 +11,9 @@ if ~exist('options','var')
     options.disp_ref = 0; % show refinement graphically
     options.disp_npc = 0; % show how many pseudocompounds are generated
     options.solver   = 0;   
+    options.algorithm  = 'dual-simplex-highs';
 end
-nref = options.nref;eps_dg = options.eps_dg;dz_tol=options.dz_tol;z_window = options.z_window; ref_fact = options.ref_fact; disp_ref = options.disp_ref;disp_npc = options.disp_npc;
+nref = options.nref;eps_dg = options.eps_dg;dz_tol=options.dz_tol;z_window = options.z_window; ref_fact = options.ref_fact; disp_ref = options.disp_ref;disp_npc = options.disp_npc;lp_algorithm=options.algorithm;
 % Minimization refinement
 if ~exist('g0','var')
     [g0,v0] = tl_g0(T,P,td,rho_w,eps_di);
@@ -24,7 +25,7 @@ for i_ref = 1:nref
     [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di);    
     g = g/1e3;
     LB            = zeros(1,size(g,1));    
-    Npc(Npc<1e-14&Npc>-1e-14) =  0;
+    % Npc(Npc<1e-14&Npc>-1e-14) =  0;
     if options.solver == 1
         Npc(Npc<1e-12)      =  0;  % Remove small number to avoid glpk instability
         [alph,gmin]  =  glpk(g,Npc,Nsys,LB,[],repmat('S',1,size(Npc,1)));     
@@ -32,12 +33,12 @@ for i_ref = 1:nref
     elseif options.solver == 2
         [alph,gmin,exitflag(i_ref)] = opti_clp([],g,Npc,Nsys,Nsys,LB);    
     else 
-        [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display','off'));
+        [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display','iter','Algorithm',lp_algorithm));
     end    
     if exitflag(i_ref) ~= 1,break,end
     gmin_ref(i_ref) = gmin*1e3;alph_iref{i_ref} = alph;p_iref{i_ref} = p; Nphs_iref{i_ref} = Npc; psc_id_iref{i_ref} = pc_id; g_iref{i_ref} = g;    
     dg_it  = 1e8;
-    if i_ref<nref && dg_it>eps_dg || max(z_window)>dz_tol
+    if i_ref<nref && dg_it>eps_dg% || max(z_window)>dz_tol
         p_ref = cell(1,length(phs_name));
         for i_sol = 1:length(phs_name)
             alph_ip     = alph(pc_id==i_sol);

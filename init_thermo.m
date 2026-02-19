@@ -1,4 +1,4 @@
-function td = init_thermo(mineral,Cname,solfile,excel_yes,pure_names,dz_fluid,max_frac_fl)
+function td = init_thermo(mineral,Cname,solfile,excel_yes,pure_names,nc_fluid,max_frac_fl)
 load 'tl_dataset' nphs elements phs_names make_coeff td_data ceos eos dgex Gr rho_w_mod dielec_mod dHf
 % if ~exist(pure_names)
 % end
@@ -54,7 +54,7 @@ for i_sol = 1:length(mineral)
             z_min           = data(strcmpi(txt(:,1),'z_min'),:);
             z_max           = data(strcmpi(txt(:,1),'z_max'),:);
             dz              = data(strcmpi(txt(:,1),'dz'),:);
-            nc              = (z_max-z_min)./(dz);%ones(size(dz))*3;
+            % nc              = (z_max-z_min)./(dz);%ones(size(dz))*3;
             nc = fix((z_max-z_min)./dz+1);
             p_name          =  txt(occ_id+2:mtpl_id-2,1);
             subdtype        = data(strcmpi(txt(:,1),'subdivision'),:);
@@ -267,9 +267,9 @@ for i_sol = 1:length(mineral)
         n_em(:,c_ind(c_ind~=-1)) = Nphs(:,c_ind~=-1);
         st                       = eye(numel(p_id));
         site_id                  = ones(1,numel(p_id));
-        z_lim                    = [zeros(1,numel(p_id));ones(1,numel(p_id))*max_frac_fl];
-        dz                       = ones(1,numel(p_id))*dz_fluid;
-        nc                       = ones(1,numel(p_id))*3;
+        z_lim                    = [zeros(1,numel(p_id));ones(1,numel(p_id))*max_frac_fl];        
+        nc                       = ones(1,numel(p_id))*nc_fluid;%ones(1,numel(p_id))*3;
+        dz                       = max_frac_fl/(nc_fluid-1);%ones(1,numel(p_id))*dz_fluid;
         subd_type                = ones(1,numel(p_id));
         [zt,zmax]                               = st2zt(st,site_id);    % Site fraction table
         [p_from_c_cons,icomp_indep,isite_indep] = comp2prop(n_em',zt'); % C variables, p to C conversion matrix
