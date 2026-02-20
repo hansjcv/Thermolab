@@ -1,19 +1,28 @@
-function [alph,Npc,pc_id,p,gmin_ref] = tl_minimizer(T,P,Nsys,phs_name,p,td,options,rho_w,eps_di,g0,v0)
+function [alph,Npc,pc_id,p,gmin_ref] = tl_minimizer(T,P,Nsys,phs_name,p,td,usr_options,rho_w,eps_di,g0,v0)
 alph_tol = 0;   % tolerance for alph counted as stable phase
+options.nref     = 150; % max number of iterations
+options.eps_dg   = 1e-12; % tolerance to stop iterations when difference between global gibbs minimimum is below this
+options.dz_tol   = 1e-14; % tolerance to stop iterations when z window becomes below this
+options.z_window = ones(size(phs_name))*0.5; % the window over which the refined grid is generated
+options.ref_fact = 1.9; % the factor to control how the z_window is narrowed each iteration, the larger, the smaller the z window over which new grid is generated
+options.disp_ref = 0; % show refinement graphically
+options.disp_npc = 0; % show how many pseudocompounds are generated
+options.solver   = 0;
+options.algorithm  = 'dual-simplex-highs';
+options.displaytype = 'off';
 if ~exist('rho_w','var'),[rho_w,eps_di] = water_props(T,P,phs_name); end
 if ~exist('eps_di','var'),[rho_w,eps_di] = water_props(T,P,phs_name); end
-if ~exist('options','var')
-    options.nref     = 150; % max number of iterations
-    options.eps_dg   = 1e-12; % tolerance to stop iterations when difference between global gibbs minimimum is below this
-    options.dz_tol   = 1e-14; % tolerance to stop iterations when z window becomes below this
-    options.z_window = ones(size(phs_name))*0.5; % the window over which the refined grid is generated    
-    options.ref_fact = 1.9; % the factor to control how the z_window is narrowed each iteration, the larger, the smaller the z window over which new grid is generated
-    options.disp_ref = 0; % show refinement graphically
-    options.disp_npc = 0; % show how many pseudocompounds are generated
-    options.solver   = 0;   
-    options.algorithm  = 'dual-simplex-highs';
+if exist('usr_options','var')
+    option_fields = fieldnames(usr_options);
+    for i = 1:length(option_fields)
+        if isfield(options, option_fields{i})
+            options.(option_fields{i}) = usr_options.(option_fields{i});
+        else
+            error('Unknown option: %s', option_fields{i});
+        end
+    end
 end
-nref = options.nref;eps_dg = options.eps_dg;dz_tol=options.dz_tol;z_window = options.z_window; ref_fact = options.ref_fact; disp_ref = options.disp_ref;disp_npc = options.disp_npc;lp_algorithm=options.algorithm;
+nref = options.nref;eps_dg = options.eps_dg;dz_tol=options.dz_tol;z_window = options.z_window; ref_fact = options.ref_fact; disp_ref = options.disp_ref;disp_npc = options.disp_npc;lp_algorithm=options.algorithm;disp_type = options.displaytype;
 % Minimization refinement
 if ~exist('g0','var')
     [g0,v0] = tl_g0(T,P,td,rho_w,eps_di);
@@ -23,9 +32,8 @@ td_ini  = td;
 gmin_old = 1e10;
 for i_ref = 1:nref       
     [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di);    
-    g = g/1e3;
-    LB            = zeros(1,size(g,1));    
-    % Npc(Npc<1e-14&Npc>-1e-14) =  0;
+    g = g/1e5;
+    LB            = zeros(1,size(g,1));        
     if options.solver == 1
         Npc(Npc<1e-12)      =  0;  % Remove small number to avoid glpk instability
         [alph,gmin]  =  glpk(g,Npc,Nsys,LB,[],repmat('S',1,size(Npc,1)));     
@@ -33,12 +41,12 @@ for i_ref = 1:nref
     elseif options.solver == 2
         [alph,gmin,exitflag(i_ref)] = opti_clp([],g,Npc,Nsys,Nsys,LB);    
     else 
-        [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display','iter','Algorithm',lp_algorithm));
+        [alph,gmin,exitflag(i_ref)] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display',disp_type,'Algorithm',lp_algorithm));
     end    
     if exitflag(i_ref) ~= 1,break,end
     gmin_ref(i_ref) = gmin*1e3;alph_iref{i_ref} = alph;p_iref{i_ref} = p; Nphs_iref{i_ref} = Npc; psc_id_iref{i_ref} = pc_id; g_iref{i_ref} = g;    
     dg_it  = 1e8;
-    if i_ref<nref && dg_it>eps_dg% || max(z_window)>dz_tol
+    if i_ref<nref && dg_it>eps_dg || max(z_window)>dz_tol
         p_ref = cell(1,length(phs_name));
         for i_sol = 1:length(phs_name)
             alph_ip     = alph(pc_id==i_sol);

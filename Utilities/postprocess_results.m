@@ -103,20 +103,20 @@ elseif ndim == 2
             nrow          = fix(sqrt(length(stb_solid_names)));% Make number of rows for subplot
             ncol          = ceil(length(stb_solid_names)/nrow);% Make number of columns for subplot
             for ipl = 1:length(stb_solid_names)
-                subplot(nrow,ncol,ipl),contourf(T2d-273.15,P2d/1e9,stb_solid_modes(:,:,ipl)*100),colorbar
+                subplot(nrow,ncol,ipl),pcolor(T2d-273.15,P2d/1e9,stb_solid_modes(:,:,ipl)*100),colorbar,shading flat
                 title(stb_solid_names(ipl)),xlabel('T(\circC)'),xlabel('P(GPa)')
             end
             figure(3), 
             rhos = reshape(rhos,length(T),length(P));
-            contourf(T2d-273.15,P2d/1e9,rhos),colorbar
+            pcolor(T2d-273.15,P2d/1e9,rhos),colorbar,shading flat
             title('\rho_s (kg/m^3)'),xlabel('T(\circC)'),xlabel('P(GPa)')      
             figure(4), 
             Xh = reshape(Xh,length(T),length(P));
-            contourf(T2d-273.15,P2d/1e9,Xh),colorbar
+            pcolor(T2d-273.15,P2d/1e9,Xh),colorbar,shading flat
             title('X_H (wt)'),xlabel('T(\circC)'),xlabel('P(GPa)')      
             figure(5), 
             rhof = reshape(rhof,length(T),length(P));
-            contourf(T2d-273.15,P2d/1e9,rhof),colorbar
+            pcolor(T2d-273.15,P2d/1e9,rhof),colorbar,shading flat
             title('\rho_f (kg/m^3)'),xlabel('T(\circC)'),xlabel('P(GPa)')      
     end
 end

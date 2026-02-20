@@ -22,7 +22,7 @@ Nsys      = Nsys_oxi*A;
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
 phs_name = {'Antigorite','Brucite','Olivine','Orthopyroxene','Talc','Spinel','Chlorite','Garnet','Fluid','Pyrrhotite','Clinohumite','pyr,tc-ds633','anth,tc-ds633'};
 td       = init_thermo(phs_name,Cname,solmod);
-for i = 1:length(phs_name),td(i).nc(:) = 4;end
+for i = 1:length(phs_name),td(i).nc(:) = 3;end
 p         = props_generate(td);     % generate endmember proportions
 refine_id = ones(length(T)*length(P),1);
 % Minimization refinement

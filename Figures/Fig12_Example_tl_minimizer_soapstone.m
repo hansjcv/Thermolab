@@ -19,11 +19,12 @@ options.nref     = 150; % max number of iterations
 options.eps_dg   = 1e-12; % tolerance to stop iterations when difference between global gibbs minimimum is below this
 options.dz_tol   = 1e-14; % tolerance to stop iterations when z window becomes below this
 options.z_window = ones(size(phs_name))*0.2; % the window over which the refined grid is generated
-options.dz_fact  = ones(size(phs_name))*3; % the factor to determine new dz spacing, the larger, the more pseudocompounds
 options.ref_fact = 1.5; % the factor to control how the z_window is narrowed each iteration, the larger, the smaller the z window over which new grid is generated
 options.disp_ref = 0;  % display refinement iterations
 options.disp_npc = 0;  % display refinement pseudocompounds
 options.solver = 0;
+options.algorithm  = 'dual-simplex-highs';
+options.displaytype = 'off';
 [rho_w,eps_di]   = water_props(T2d(:),P2d(:),phs_name,'ZD05','S14');       % Water properties
 tic
 % Minimization refinement
