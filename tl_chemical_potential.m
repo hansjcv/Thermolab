@@ -1,25 +1,20 @@
-function [mu,a,RTlngam,z] = tl_chemical_potential(T,P,mineral,td,p,Cname,g0,v0)
+function [mu,a,RTlngam,z] = tl_chemical_potential(T,P,td,p,g0)
 R = 8.3144;P = P/1e8;
 st = td.st;zt = td.zt;mtpl = td.mtpl;alp = td.alp;w = td.w;
+if td.mod_id == 4
+    zt = st;
+end
 z_tol = 1e-10;
 z = p*zt;z(z<1+z_tol & z>1-z_tol) = 1;z(z<  z_tol & z> -z_tol) = 1e-20;
 % Compute activity normalization factors
-if ~strcmp(mineral,'Melt(H18)')
-    for ip = 1:size(st,1)
-        a0(ip) = prod(zt(ip,st(ip,:)>0).^(zt(ip,st(ip,:)>0).*mtpl(st(ip,:)>0)));
-    end
-    N = 1./a0;
-    % Ideal activities
-    for ip = 1:size(st,1)
-        a(:,ip) = N(ip)*prod(z(:,st(ip,:)>0).^repmat(zt(ip,st(ip,:)>0).*mtpl(st(ip,:)>0),size(z,1),1),2);
-    end
-else
-%     C = p*td.n_em;
-%     yct = p(:,strcmp(td(1).p_name,'ctL,tc-ds633'));
-%     [z,p2,a] = hydrous_melt_speciation(C,Cname,yct,td);   
-    a = a_id_meltH18(p,td);
-%     a(isnan(a)) = 1;
-%     a(:,sum(p2,1)==0) = [];
+a = zeros(size(p));
+for ip = 1:size(st,1)
+    a0(ip) = prod(zt(ip,st(ip,:)>0).^(zt(ip,st(ip,:)>0).*mtpl(st(ip,:)>0)));
+end
+N = 1./a0;
+% Ideal activities
+for ip = 1:size(st,1)
+    a(:,ip) = N(ip)*prod(z.^repmat(zt(ip,:).*mtpl,size(z,1),1),2);
 end
 a(a==0) = z_tol;
 % non-ideal
@@ -48,4 +43,4 @@ for ip = 1:np
         end
     end
 end
-mu = cell2mat(g0) + R*T*log(a) + RTlngam;
+mu = (cell2mat(g0) + R*T*log(a) + RTlngam);

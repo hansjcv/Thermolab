@@ -33,6 +33,12 @@ switch db_name
         gas_id = 234:241;
         liq_id = 242:263;
         aq_id  = 264:289;
+    case 'tc-ds636'
+        phases = phases(1:291);
+        nphs   = nphs(1:291,:);        
+        gas_id = 236:243;
+        liq_id = 244:265;
+        aq_id  = 266:291;
     case 'DEW'
         aq_id  = 1:length(phases);
         liq_id = [];

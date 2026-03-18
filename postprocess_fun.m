@@ -20,20 +20,21 @@ phim  = alph/sum(alph);                                                   % phi 
 phi   = phim.*Vmol./(Vmol'*phim);                                         % Equation 47
 phiw  = phim.*Mmol./(Mmol'*phim);                                         % Equation 48
 Cwt   = Npc.*repmat(molm,1,size(Npc,2))./repmat(Mmol',size(Npc,1),1);     % Equation 49
-% Chemical potential
-stable_phases = phases(pc_id);
-cnt = 0;
-for ip = 1:length(p_out)
-    if ~isempty(p_out{ip})
-        for jp = 1:size(p_out{ip},1)
-            cnt = cnt + 1;
-            p_stable{cnt} = p_out{ip}(jp,:);
-        end
-    end
-end
-td_stable    = td(pc_id);
-g0_stable    = g0(pc_id);
-v0_stable    = v0(pc_id);
-rho_w_stable = rho_w(pc_id);
-eps_w_stable = eps_w(pc_id);
-mu   = mu_fun(T,P,stable_phases,td_stable,p_stable,g0_stable,v0_stable,rho_w_stable,eps_w_stable);
+% % Chemical potential
+% stable_phases = phases(pc_id);
+% cnt = 0;
+% for ip = 1:length(p_out)
+%     if ~isempty(p_out{ip})
+%         for jp = 1:size(p_out{ip},1)
+%             cnt = cnt + 1;
+%             p_stable{cnt} = p_out{ip}(jp,:);
+%         end
+%     end
+% end
+% td_stable    = td(pc_id);
+% g0_stable    = g0(pc_id);
+% v0_stable    = v0(pc_id);
+% rho_w_stable = rho_w(pc_id);
+% eps_w_stable = eps_w(pc_id);
+% mu   = mu_fun(T,P,stable_phases,td_stable,p_stable,g0_stable,v0_stable,rho_w_stable,eps_w_stable);
+mu = 0;

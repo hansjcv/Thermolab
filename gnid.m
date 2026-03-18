@@ -22,16 +22,16 @@ elseif model_type == 2
     l_gam = zeros(size(z,1),size(z,2));
     I  = 0;
     mz = 0;
-    for i = 1:size(z,1)-1
-        z_m(i,:)     = z(i,:)/Mw; % Convert to molality
+    for i = 1:size(z,1)
+        z_m(i,:)     = z(i,:)./(z(end,:)*Mw); % Try again
     end
-    for i = 1:size(z,1)-1 % loop over species in the fluid
+    for i = 1:size(z,1) % loop over species in the fluid
         I      = I + 0.5*z_m(i,:)*chg(i).^2; % True Ionic strength
         if chg(i)~=0
             mz = mz + z_m(i,:); % total molality of charged species
         end
     end
-    mt   = sum(z_m,1); % total molality
+    mt   = sum(z_m(1:end-1,:),1); % total molality
     Lgam = -log10(1+Mw*mt); % large gamma (for 1 kg of water) conversion factor see Helgeson L gamma page 1293 eq 122
     % Debye-Hueckel A and B parameters
     A = (1.82483e6)*sqrt(rho_w_gcm3(:)) ./ (T(:).*eps_di(:)).^(3/2);
@@ -47,8 +47,8 @@ elseif model_type == 2
         phi       = -log(10)*mz./mt.*(A(iPT).*sqrt(I).*sig/3 + Lgam./(Mw*nu*I) - b_gam*I/2); % Osmotic coefficient
         phi(I==0) = 0; % set osmotic coefficient to 0 for case of no electrolytes
         a_w       = exp(-phi.*mt/Nw); % Activity of water
-        % gam_w     = a_w./z_m(end,:); % Activity coefficient water DIVIDED by z_molality 26-4-2022       
-        gam_w     = a_w./z(end,:); % Activity coefficient water DIVIDED by z mole fraction
+        gam_w     = a_w./z_m(end,:); % Activity coefficient water DIVIDED by z_molality 26-4-2022       
+%         gam_w     = a_w./z(end,:); % Activity coefficient water DIVIDED by z mole fraction
         % Activity coefficients
         gam     = 10.^(l_gam);
         % Make the excess g in mole fractions
@@ -58,8 +58,7 @@ elseif model_type == 2
         end
         % and add the water contribution
         g_ex = g_ex + R*T(iPT)*z(end,:).*log(gam_w);
-    end    
-    % g_fl(iX)    = sum((g0(m_id==2,iT)' + 8.3144*T(iT)*log(s.*gam) + 8.3144*T(iT)*log(Nw)).*s) + (g0(m_id==1,iT) + 8.3144*T(iT)*log(a_w))*sw; % better
+    end
     g_nid = g_ex'; 
 elseif model_type == 3
     V = v0;

@@ -8,11 +8,11 @@ Cmol_oxy  = [68    , 12.488  , 10.529 , 4.761 , 3.819 ,       50];
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
 phs_name = {'Chlorite','Garnet','Biotite','Muscovite','Staurolite','Chloritoid',...
             'Cordierite','and,tc-ds55','sill,tc-ds55','ky,tc-ds55','H2O,tc-ds55','q,tc-ds55'};
-td       = init_thermo(phs_name,Cname,'solution_models_KFMASH',0);
+td       = init_thermo(phs_name,Cname,'solution_models_KFMASH');
 for i = 1:length(phs_name),td(i).nc(:) = 3;end
 p        = props_generate(td);     % generate endmember proportions
 [T2d,P2d] = ndgrid(T,P);
-options.nref = 1;
+options.nref = 150;
 % Minimization refinement
 parfor iPT = 1:length(T2d(:))
     [alph_all{iPT},Npc_all{iPT},pc_id_ref{iPT},p_ref{iPT},g_min{iPT}] = tl_minimizer(T2d(iPT),P2d(iPT),Nsys,phs_name,p,td,options);

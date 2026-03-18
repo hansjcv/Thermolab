@@ -41,11 +41,14 @@ if ~exist('p','var')
 end
 for i_sol = 1:length(phase)
     mod_id = td(i_sol).mod_id;
+    st = td(i_sol).st;
     mtpl  = td(i_sol).mtpl; zt = td(i_sol).zt; alp = td(i_sol).alp; w = td(i_sol).w; z_tol = td(i_sol).z_tol;
     z     = p{i_sol}*zt;      z(z<1+z_tol & z>1-z_tol) = 1;z(z<  z_tol & z> -z_tol) = 1e-20;
     chg   = td(i_sol).chg;n_em = td(i_sol).n_em;
     if mod_id == 4
-        [mtpl,z,zt] = temkin_H18(phase(i_sol),td(i_sol),p{i_sol},z);
+        z = p{i_sol}*st;
+        z(z<1+z_tol & z>1-z_tol) = 1;z(z<  z_tol & z> -z_tol) = 1e-20;
+        zt = ones(size(zt));
     end
     % Gibbs energy of mixing
     g_mech = p{i_sol}*g0{i_sol}';                                                                 % Mechanical

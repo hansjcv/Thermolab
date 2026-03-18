@@ -3,8 +3,13 @@ for i_sol = 1:length(td)
     z_indep{i_sol}  = auto_xgrid(td(i_sol).z_lim,td(i_sol).nc,td(i_sol).subdtype);
     if isempty(td(i_sol).site_var)
         p{i_sol} = 1;
-    else
-        p{i_sol} = zvar2zap(z_indep{i_sol},td(i_sol).phase_name,td(i_sol).site_id,td(i_sol).site_var,td(i_sol).p_from_z_cons,td(i_sol).zt,td(i_sol).z_tol);
+        z_indep{i_sol} = 1;
+    else                
+        if td(i_sol).mod_id == 4
+            [p{i_sol},z_indep{i_sol}] = zvar2zap(z_indep{i_sol},td(i_sol).phase_name,td(i_sol).site_id,td(i_sol).site_var,td(i_sol).p_from_z_cons,td(i_sol).st,td(i_sol).z_tol);
+        else
+            [p{i_sol},z_indep{i_sol}] = zvar2zap(z_indep{i_sol},td(i_sol).phase_name,td(i_sol).site_id,td(i_sol).site_var,td(i_sol).p_from_z_cons,td(i_sol).zt,td(i_sol).z_tol);
+        end
     end
 end
 end
@@ -72,9 +77,9 @@ else
     x{1} = 1;
 end
 end
-function p = zvar2zap(z_indep,sol_id,site_id,site_var,p_from_z_cons,zt,z_tol)
+function [p,z_indep] = zvar2zap(z_indep,sol_id,site_id,site_var,p_from_z_cons,zt,z_tol)
 indep_site_id = site_id(site_var);
-if ~strcmp(sol_id,'Melt(H18)')
+if ~strcmp(sol_id,'Melt(G25)')
     for i_site = 1:max(site_id)
         z_indep(sum(z_indep(:,indep_site_id==i_site),2)>1,:)=[];
     end
@@ -83,10 +88,11 @@ end
 p    = (p_from_z_cons*[ones(1,size(z_indep,1)); z_indep'])';
 z    = p*zt;
 z(z<1+z_tol & z>1-z_tol) = 1;z(z<  z_tol & z> -z_tol) = 1e-20;
-if ~strcmp(sol_id,'Melt(H18)')
+if ~strcmp(sol_id,'Melt(G25)')
     badz = min(z')<0|max(z')>1;
 else
     badz = min(z')<0;
 end
-p(badz,:) = [];
+p(badz,:)       = [];
+z_indep(badz,:) = [];
 end
