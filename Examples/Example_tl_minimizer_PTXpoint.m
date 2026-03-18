@@ -1,17 +1,19 @@
 clear,clf,addpath ../ ../Utilities/ ../Solutions/ ../EOS
 run_name = 'example_PTpoint';
-T      = 400 + 273.15; %K
-P      = 4e9; % Pa
+T      = 600 + 273.15; %K
+P      = 2e9; % Pa
 solmod = 'solution_models_EF21'; % solution model file name. See Solutions subfolder for more
-Cname  = {'Si' ,'Al', 'Fe'  'Mg',    'H','O'  }; % System components
-Nsys   = [34     2     2    46        62  150.001]; % system composition in elemental mole.
+Cname  = {'Si' ,'Al', 'Fe'  'Mg',    'H','O'  'e',}; % System components
+Nsys   = [34     2     2    46+1        62+2  150.001+2 0]; % system composition in elemental mole.
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
-phs_name = {'Chlorite','Garnet','Spinel','Antigorite','Brucite','Olivine','Orthopyroxene','anth,tc-ds633','Talc','q,tc-ds633','per,tc-ds633','H2O,tc-ds633'};
-td       = init_thermo(phs_name,Cname,solmod); % initialize thermodynamic data
+% phs_name = {'Chlorite','Garnet','Spinel','Antigorite','Brucite','Olivine','Orthopyroxene','anth,tc-ds633','Talc','q,tc-ds633','per,tc-ds633','cor,tc-ds633','H2O,tc-ds633'};
+phs_name = {'Aq-fluid','Chlorite','Garnet','Spinel','Antigorite','Brucite','Olivine','Orthopyroxene','anth,tc-ds633','Talc','q,tc-ds633','per,tc-ds633'};
+td       = init_thermo(phs_name,Cname,solmod,1,{'SiO2,aq,DEW','Si2O4,aq,DEW','Si3O6,aq,DEW','MgO,aq,DEW','MgOH+,DEW','Mg+2,DEW','FeO,aq,DEW','Fe+2,DEW','HAlO2,aq,DEW','OH-,DEW','H+,DEW','H2O,tc-ds633'},1,1); % initialize thermodynamic data
 for ip = 1:length(phs_name),td(ip).nc(:) = 3;end
 p        = props_generate(td);                 % generate pseudocompounds
 options.disp_ref  = 1;
 options.TPDmin    = 1;
+options.eps_dg    = 1e-3;
 options.fsolve    = 1;
 options.use_pgrid = 1;
 % One minimization
