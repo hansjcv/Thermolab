@@ -1,5 +1,5 @@
 clear,addpath ../../ ../../Solutions ../../EOS ../../Utilities/
-case_id = 17;
+case_id = 3;
 if 1 == case_id
     st_data;
     phase = {'Staurolite'};
@@ -63,7 +63,7 @@ for i = 1:length(T_tc)
     [g0,v0] = tl_g0(T(:),P(:),td,rho_w,eps_di,1); % use option 1 to use 'apparent Gibbs energy'
     p{1} = p_tc(i,:);%[-0.21756,0.35166,0.56365,-0.038051,0.0037738,0.30484,-0.28228,-0.00075077,0.21444,0.076988,0.023286];
     [g,Npc,pc_id,p1,z,g_id,g_nid] = tl_gibbs_energy(T(:),P(:),phase,td,p,g0,v0);
-    [mu,a,RTlngam] = tl_chemical_potential(T(:),P(:),phase,td,p{1},Cname,g0,v0);
+    [mu,a,RTlngam] = tl_chemical_potential(T(:),P(:),td,p{1},g0);
     z_indep      = z_tc(i,td.site_var);
     p2           = (td.p_from_z_cons*[ones(1,size(z_indep,1)); z_indep'])';
     chk_p(i)     = max(abs(p2-p_tc(i,:)));
