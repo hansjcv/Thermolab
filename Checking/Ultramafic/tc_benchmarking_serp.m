@@ -7,35 +7,44 @@ GibbsEnergies = [];
 g_ideal = [];
 g_non_ideal = [];
 Minerals = [];
-for case_id = 1
+for case_id = 12
     %% Load data
     if 1 == case_id
         atg_data;
         phase = {'Antigorite'};
-    % elseif 2 == case_id
-    %     ma_data;
-    %     phase = {'Margarite-tc'};
-    % elseif 3 == case_id
-    %     g_data;
-    %     phase = {'Garnet'};
-    % elseif 4 == case_id
-    %     ep_data;
-    %     phase = {'Epidote'};
-    % elseif 5 == case_id
-    %     mu_data;
-    %     phase = {'Muscovite_tc'};
-    % elseif 6 == case_id
-    %     cd_data;
-    %     phase = {'Cordierite'};
-    % elseif 7 == case_id
-    %     bi_data;
-    %     phase = {'Biotite'};
-    % elseif 8 == case_id
-    %     pl4tr_data;
-    %     phase = {'Feldspar'};
-    % elseif 9 == case_id
-    %     chl_data;
-    %     phase = {'Chlorite'};
+    elseif 2 == case_id
+        chl_data;
+        phase = {'Chlorite'};
+    elseif 3 == case_id
+        br_data;
+        phase = {'Brucite'};
+    elseif 4 == case_id
+        ol_data;
+        phase = {'Olivine'};
+    elseif 5 == case_id
+        ch_data;
+        phase = {'Clinohumite'};
+    elseif 6 == case_id
+        po_data;
+        phase = {'Pyrrhotite'};
+    elseif 7 == case_id
+        spi_data;
+        phase = {'Spinel'};
+    elseif 8 == case_id
+        opx_data;
+        phase = {'Orthopyroxene'};
+    elseif 9 == case_id
+        ta_data;
+        phase = {'Talc'};
+    elseif 10 == case_id
+        g_data;
+        phase = {'Garnet'};
+    elseif 11 == case_id
+        anth_data;
+        phase = {'Anthophyllite'};
+    elseif 12 == case_id
+        fl_data;
+        phase = {'Fluid'};
     end
     chk_p = [];
     chk_z = [];
@@ -51,7 +60,7 @@ for case_id = 1
     for i = 1:length(T_tc)
         Temp  = T_tc(i);
         Pres  = P_tc(i);
-        Cname = {'Si','Ti','Al','Fe','Mn','Mg','Ca','Na','K','H','O'};
+        Cname = {'Si','Ti','Al','Fe','Mn','Mg','Ca','Na','K','S','H','O'};
         td    = init_thermo(phase,Cname,'Ultramafic');
         [T,P] = ndgrid(Temp,Pres);
         [rho_w,eps_di]  = water_props(T(:),P(:),phase,'PS94','S14');
@@ -66,7 +75,7 @@ for case_id = 1
         chk_g0(i)    = max(abs(g0{1}-mu0_tc(i,:)*1e3));
         chk_a_id(i)  = max(abs(a-a_id_tc(i,:)));
         chk_gid(i)   = max(abs(g_id-R*T*log(a_id_tc(i,:) + double(a_id_tc(i,:)==0))*p_tc(i,:)'));
-        chk_gnid(i)   = max(abs(g_nid-R*Temp*log(gam_tc(i,:))*p_tc(i,:)'));
+        chk_gnid(i)   = max(abs(g_nid-R*Temp*log(gam_tc(i,:)+ double(gam_tc(i,:)==0))*p_tc(i,:)'));
         chk_gam(i)   = max(abs(gam_tc(i,:) - exp(RTlngam/Temp/R)));
         chk_g(i)     = max(abs(g-g_tc(i)*1e3));
         chk_RTlngam(i) = max(abs(R*Temp*log(gam_tc(i,:)) - (RTlngam)));
@@ -82,5 +91,5 @@ for case_id = 1
     Minerals      = [Minerals;phase];
 end
 %% Show results
-disp('This table shows maximum difference in Gibbs energies in Joules')
+disp('This table shows maximum difference in Gibbs energies in Joules comparing THERMOCALC output with Thermolab')
 table(GibbsEnergies,mu0,g_ideal,g_non_ideal,proportions,sitefractions,'RowNames',Minerals)
