@@ -1,6 +1,5 @@
-clclear,figure(1),clf,colormap jet,addpath ../,addpath ../Utilities/
-clear,colormap jet
-runname  = 'soapstone_2022_02_14_n500_nz15_full_0_5kb'; 
+clear,figure(1),clf,colormap jet,addpath ../,addpath ../Utilities/
+runname  = 'soapstone_2022_02_14_n150_nz15_full_0_5kb'; 
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm      = molmass_fun(Cname);
 solv_tol  = 100;
