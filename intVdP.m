@@ -89,11 +89,12 @@ elseif eos == 2
         +           (1 + tb .* (Pr - pth)).^(1 - tc))./(tb.*(tc - 1)))...
         ./         ((1 - ta) + ta.*(1 + tb * Pr).^(-tc));
     VdP(isnan(VdP)) = 0;
+    V   = V1_T.*(1-ta.*(1-(1+tb.*(P-pth)).^(-tc)));
     if dqf == 1
         VdP = V1_T.*P;
+        V   = 0; % for dqf additions, set volume of this energetic contribution to zero
     end
-    VdP = VdP*1e3;
-    V   = V1_T.*(1-ta.*(1-(1+tb.*(P-pth)).^(-tc)));
+    VdP = VdP*1e3;    
 elseif eos == 3 % HKF
     Pref   = 1;
     Pbar   = P*1e3;
