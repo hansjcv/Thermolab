@@ -18,8 +18,9 @@ options.eps_dg    = 1;
 options.TPDmin    = 1;
 options.fsolve    = 1;
 options.use_pgrid = 1;
-% Minimization refinement
+%% Minimization refinement
 [alph_all,Npc_all,pc_id_ref,p_ref,g_min,alph_fsolve,Npc_fsolve,pc_id_fsolve,p_fsolve] = tl_minimizer(T,P,Nsys,phs_name,p,td,options);
+%% Postprocess
 molm = molmass_fun(Cname);
 solv_tol = 0.1;
 if ~isempty(alph_fsolve) && sum(alph_fsolve<0)==0 && isreal(alph_fsolve)

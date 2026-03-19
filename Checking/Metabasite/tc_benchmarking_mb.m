@@ -1,4 +1,4 @@
-clear,addpath ../../ ../../Solutions ../../EOS ../../Utilities/
+clear,addpath ../../ ../../EOS ../../Solutions/
 R = 8.3145;
 proportions = [];
 sitefractions = [];
@@ -7,14 +7,14 @@ GibbsEnergies = [];
 g_ideal = [];
 g_non_ideal = [];
 Minerals = [];
-for case_id = 17%1:17
+for case_id = 12%1:14
     %% Load data
     if 1 == case_id
-        st_data;
-        phase = {'Staurolite'};
+        hb_data;
+        phase = {'Amphibole'};
     elseif 2 == case_id
-        ma_data;
-        phase = {'Margarite-tc'};
+        dio_data;
+        phase = {'Diopside'};
     elseif 3 == case_id
         g_data;
         phase = {'Garnet'};
@@ -23,10 +23,10 @@ for case_id = 17%1:17
         phase = {'Epidote'};
     elseif 5 == case_id
         mu_data;
-        phase = {'Muscovite_tc'};
+        phase = {'Muscovite'};
     elseif 6 == case_id
-        cd_data;
-        phase = {'Cordierite'};
+        pli_data;
+        phase = {'Feldspar(I1)'};
     elseif 7 == case_id
         bi_data;
         phase = {'Biotite'};
@@ -43,23 +43,14 @@ for case_id = 17%1:17
         ilm_data;
         phase = {'Ilmenite'};
     elseif 12 == case_id
-        mt1_data;
-        phase = {'Magnetite'};
-    elseif 13 == case_id
-        ctd_data;
-        phase = {'Chloritoid'};
-    elseif 14 == case_id
         sp_data;
         phase = {'Spinel'};
-    elseif 15 == case_id
-        sa_data;
-        phase = {'Sapphirine'};
-    elseif 16 == case_id
-        ilmm_data;
-        phase = {'Ilmenite-Mn'};
-    elseif 17 == case_id
+    elseif 13 == case_id
         liq_data;
-        phase = {'Melt(W14)'};
+        phase = {'Melt(G16)'};
+    elseif 14 == case_id
+        aug_data;
+        phase = {'Augite'};
     end
     chk_p = [];
     chk_z = [];
@@ -76,7 +67,7 @@ for case_id = 17%1:17
         Temp  = T_tc(i);
         Pres  = P_tc(i);
         Cname = {'Si','Ti','Al','Fe','Mn','Mg','Ca','Na','K','H','O'};
-        td    = init_thermo(phase,Cname,'Metapelite');
+        td    = init_thermo(phase,Cname,'Metabasite');
         [T,P] = ndgrid(Temp,Pres);
         [rho_w,eps_di]  = water_props(T(:),P(:),phase,'PS94','S14');
         [g0,v0] = tl_g0(T(:),P(:),td,rho_w,eps_di,1); % use option 1 to use 'apparent Gibbs energy'
@@ -85,29 +76,29 @@ for case_id = 17%1:17
         [mu,a,RTlngam] = tl_chemical_potential(T(:),P(:),td,p{1},g0);
         z_indep      = z(td.site_var);%z_tc(i,td.site_var);
         p2           = (td.p_from_z_cons*[ones(1,size(z_indep,1)); z_indep'])';
-        if strcmp(phase,'Melt(W14)')
+        chk_p(i)     = max(abs(p2-p_tc(i,:)));
+        if strcmp(phase,'Melt(G16)')
             z2 = z;
-            z2([8,9]) = z2([8,9])/z2(7);
+            z2([10,11]) = z2([10,11])/z2(9);
             chk_z(i)  = max(abs(z2-z_tc(i,:)));
         else
             chk_z(i)     = max(abs(z-z_tc(i,:)));
         end
-        chk_p(i)     = max(abs(p2-p_tc(i,:)));        
-        chk_g0(i)    = max(abs(g0{1}-mu0_tc(i,:)*1e3));
-        chk_a_id(i)  = max(abs(a-a_id_tc(i,:)));
-        chk_gid(i)   = max(abs(g_id-R*T*log(a_id_tc(i,:) + double(a_id_tc(i,:)==0))*p_tc(i,:)'));
-        chk_gnid(i)   = max(abs(g_nid-R*Temp*log(gam_tc(i,:))*p_tc(i,:)'));
-        chk_gam(i)   = max(abs(gam_tc(i,:) - exp(RTlngam/Temp/R)));
-        chk_g(i)     = max(abs(g-g_tc(i)*1e3));
-        chk_RTlngam(i) = max(abs(R*Temp*log(gam_tc(i,:)) - (RTlngam)));
+        chk_g0(i)       = max(abs(g0{1}-mu0_tc(i,:)*1e3));
+        chk_a_id(i)     = max(abs(a-a_id_tc(i,:)));
+        chk_gid(i)      = max(abs(g_id-R*T*log(a_id_tc(i,:) + double(a_id_tc(i,:)==0))*p_tc(i,:)'));
+        chk_gnid(i)     = max(abs(g_nid-R*Temp*log(gam_tc(i,:))*p_tc(i,:)'));
+        chk_gam(i)      = max(abs(gam_tc(i,:) - exp(RTlngam/Temp/R)));
+        chk_g(i)        = max(abs(g-g_tc(i)*1e3));
+        chk_RTlngam(i)  = max(abs(R*Temp*log(gam_tc(i,:)) - (RTlngam)));
         chk_RTlna_id(i) = max(abs(R*Temp*log(a_id_tc(i,:)) - (R*Temp*log(a))));
-        chk_RTlna(i) = max(abs(RTlna_tc(i,:) - (R*Temp*log(a)+RTlngam)));
+        chk_RTlna(i)    = max(abs(RTlna_tc(i,:) - (R*Temp*log(a)+RTlngam)));
     end
     proportions = [proportions;max(chk_p)'];
     sitefractions = [sitefractions;max(chk_z)'];
     mu0 = [mu0;max(chk_g0)'];
     g_ideal = [g_ideal;max(chk_gid)];
-    g_non_ideal = [g_non_ideal;max(chk_gnid)];   
+    g_non_ideal = [g_non_ideal;max(chk_gnid)];
     GibbsEnergies = [GibbsEnergies;max(chk_g)'];
     Minerals = [Minerals;phase];
 end
