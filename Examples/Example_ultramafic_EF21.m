@@ -1,8 +1,8 @@
 clear,clf, addpath ../ ../EOS ../Solutions/ ../Utilities/
 run_name = 'EF21_red';
-T      = linspace(300,850,20) + 273.15;
-P      = linspace(0.5,4.0,21)*1e9;
-solmod = 'solution_models_EF21';
+T      = linspace(300,850,10) + 273.15;
+P      = linspace(0.5,4.0,11)*1e9;
+solmod = 'Ultramafic';
 ngrid    = 4; % number of P-T grid refinements, each time, the P-T grid resolution is doubled.
 eps_solv = 1;
 Cname   = {'Si'   ,'Al'   ,'Mg', 'Fe',  'S', 'H','O'  };
@@ -20,7 +20,7 @@ molm    = molmass_fun(wtnames,Cname,A);
 Nsys_oxi = wtperc./molm';
 Nsys      = Nsys_oxi*A;
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
-phs_name = {'Antigorite','Brucite','Olivine','Orthopyroxene','Talc','Spinel','Chlorite','Garnet','Fluid','Pyrrhotite','Clinohumite','pyr,tc-ds633','anth,tc-ds633'};
+phs_name = {'Antigorite','Brucite','Olivine','Orthopyroxene','Talc','Spinel','Chlorite','Garnet','Fluid','Pyrrhotite','Clinohumite','Anthophyllite','pyr,tc-ds633'};
 td       = init_thermo(phs_name,Cname,solmod);
 for i = 1:length(phs_name),td(i).nc(:) = 3;end
 p         = props_generate(td);     % generate endmember proportions
