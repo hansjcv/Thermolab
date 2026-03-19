@@ -1,7 +1,7 @@
 clear,clf, addpath ../ ../EOS ../Solutions/ ../Utilities/
 run_name = 'EF21_red';
-T      = linspace(300,850,10) + 273.15;
-P      = linspace(0.5,4.0,11)*1e9;
+T      = linspace(300,850,30) + 273.15;
+P      = linspace(0.5,4.0,31)*1e9;
 solmod = 'Ultramafic';
 ngrid    = 4; % number of P-T grid refinements, each time, the P-T grid resolution is doubled.
 eps_solv = 1;
