@@ -1,7 +1,7 @@
 function [mu,a,RTlngam,z] = tl_chemical_potential(T,P,td,p,g0,v0)
 R = 8.3144;P = P/1e8;
 st = td.st;zt = td.zt;mtpl = td.mtpl;alp = td.alp;w = td.w;mod_id = td.mod_id;z_tol = td.z_tol;
-if mod_id == 0 || mod_id == 1 || mod_id == 4
+if mod_id == 0 || mod_id == 1 || mod_id == 4 || mod_id == 5
     if mod_id == 4
         zt = st;
     end   

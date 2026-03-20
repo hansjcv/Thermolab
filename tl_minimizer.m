@@ -157,6 +157,9 @@ for i_ref = 1:nref
     if disp_ref == 1
         if options.TPDmin == 1
             plot(1:i_ref,gmin_ref(1:i_ref)),title([dg_it1,i_ref,length(pc_id)]),drawnow
+            if i_ref>1
+                fprintf('diff g-system: %e\n', (gmin_old-gmin)*1e3);
+            end
         else
             plot(1:i_ref,gmin_ref(1:i_ref)),title([dg_it,i_ref,length(pc_id),max(z_window)]),drawnow%hold on,text(i_ref,gmin_ref(i_ref),phs_name(pc_id)),            
         end
