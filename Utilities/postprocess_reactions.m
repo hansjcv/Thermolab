@@ -1,4 +1,7 @@
-function [em_comps,em_names,em_props,p_eqn] = postprocess_reactions(T,P,td,pc_id,p_out)
+function [em_comps,em_names,em_props,p_eqn] = postprocess_reactions(T,P,td,pc_id,p_out,disp_reacts)
+if ~exist('disp_reacts','var')
+    disp_reacts = 0;
+end
 [g0,v0]  = tl_g0(T,P,td);
 em_comps = cell2mat({td(pc_id).n_em}');
 em_names = cell(size(em_comps,1),1);
@@ -25,8 +28,10 @@ for i_sol = 1:length(p_out)
         end
     end
 end
-v = null(em_comps','r');
-% disp_reactions(em_names,v);
-chk = max(abs(v'*mu_lp));
-% disp(chk)
+if disp_reacts == 1
+    v = null(em_comps','r');
+    disp_reactions(em_names,v);
+    chk = max(abs(v'*mu_lp));
+    disp(['delta g = ' num2str(chk)])
+end
 

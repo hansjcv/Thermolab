@@ -1,5 +1,5 @@
 clear,clf,addpath ../ ../Solutions ../Utilities ../EOS
-T = 1252.476+273.15;%1252.476 + 273.15;
+T = 1252.476+273.15;%1080 + 273.15;
 P = 1*1e8;            
 Cname_oxy = {'SiO2','Al2O3'  ,'CaO'   ,'MgO'  , 'FeO' ,'K2O','Na2O', 'TiO2','Cr2O3'};
 nO        =  0.35;
@@ -23,16 +23,17 @@ options.use_pgrid = 1;
 %% Postprocess
 molm = molmass_fun(Cname);
 solv_tol = 0.1;
+print_reactions = 1;
 if ~isempty(alph_fsolve) && sum(alph_fsolve<0)==0 && isreal(alph_fsolve)
     Stablephases    = phs_name(pc_id_fsolve)';
     td_stable       = td(pc_id_fsolve);
     pc_id_fsolve    = 1:numel(pc_id_fsolve);
     [pc_id,phi,Cwt,sfu,rho,mu,p_out,phiw,g,molphase] = postprocess_fun(T,P,td_stable,alph_fsolve,Npc_fsolve,molm,p_fsolve,pc_id_fsolve,Stablephases,solv_tol,'PS94','S14');
-    postprocess_reactions(T,P,td_stable,pc_id,p_out);
+    postprocess_reactions(T,P,td_stable,pc_id,p_out,print_reactions);
 else
     Stablephases    = phs_name(pc_id)';
     [pc_id,phi,Cwt,sfu,rho,mu,p_out,phiw,g,molphase] = postprocess_fun(T,P,td,alph_all,Npc_all,molm,p_ref,pc_id_ref,phs_name,solv_tol,'PS94','S14');
-    postprocess_reactions(T,P,td,pc_id,p_out);
+    postprocess_reactions(T,P,td,pc_id,p_out,print_reactions);
 end
 % Here some more human readable meaning of the output from the postprocess function
 Volumefractions = phi; 
