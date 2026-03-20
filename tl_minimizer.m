@@ -1,4 +1,4 @@
-function [alph,Npc,pc_id,p,gmin_ref,alph_fsolve,Npc_fsolve,pc_id_fsolve,p_fsolve] = tl_minimizer(T,P,Nsys,phs_name,p,td,usr_options,rho_w,eps_di,g0,v0)
+function [alph,Npc,pc_id,p,gmin_ref,alph_fsolve,Npc_fsolve,pc_id_fsolve,p_fsolve,chk_dg_ref,chk_Nsys_ref] = tl_minimizer(T,P,Nsys,phs_name,p,td,usr_options,rho_w,eps_di,g0,v0)
 options.alph_tol    = 0;   % tolerance for alph counted as stable phase
 options.nref        = 150; % max number of iterations
 options.eps_dg      = 1e-12; % tolerance to stop iterations when difference between global gibbs minimimum is below this
@@ -50,12 +50,13 @@ td_ini   = td;
 p_ini    = p;
 gmin_old = 1e10;
 g0_ini   = g0;
+v0_ini   = v0;
 for i_sol = 1:length(phs_name)
     x0{i_sol} = ones(numel(td(i_sol).site_var),1)*x0_ini;
 end
 for i_ref = 1:nref    
     gmin_int = ones(size(phs_name))*1;
-    [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0_ini,v0,rho_w,eps_di);    
+    [g,Npc,pc_id] = tl_gibbs_energy(T,P,phs_name,td,p,g0_ini,v0_ini,rho_w,eps_di);    
     g = g/8.3144/T;
     LB            = zeros(1,size(g,1));
     if options.solver == 1
@@ -184,9 +185,9 @@ if options.fsolve == 1
     v = null(em_comps','r');
     options_fsolve = optimoptions('fsolve','Algorithm','trust-region-dogleg','Display',options.fsolve_disp);%'MaxFunctionEvaluations',10000,'MaxIterations',10000,'StepTolerance',1e-16,'TolFun',1e-16
     x0_fsolve      = [em_props(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));alph_out];
-    f              = @(x) tl_dmu(x,T,P,phs_name(pc_id_out),Nsys,td_ini(pc_id_out),p_eqn,g0_ini(pc_id_out),v,em_comps);
+    f              = @(x) tl_dmu(x,T,P,phs_name(pc_id_out),Nsys,td_ini(pc_id_out),p_eqn,g0_ini(pc_id_out),v0_ini(pc_id_out),v,em_comps);
     x              = fsolve(f,x0_fsolve,options_fsolve); % find proportions
-    alph_fsolve       = x(sum(sum(p_eqn(sum(p_eqn,2)>1,:)))+1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))) + numel(pc_id_out));
+    alph_fsolve    = x(sum(sum(p_eqn(sum(p_eqn,2)>1,:)))+1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))) + numel(pc_id_out));
     p_ref          = x(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));
     %% Postprocessing 2
     em_props   = [p_ref;ones(sum(sum(p_eqn,2)==1),1)];
@@ -195,15 +196,17 @@ if options.fsolve == 1
     for i_p = 1:length(pc_id_out)
         p_fsolve{i_p}    = em_props(p_eqn(i_p,:)==1)';
         Npc_fsolve(:,i_p)           = p_fsolve{i_p}*em_comps(p_eqn(i_p,:)==1,:);
-        em_chempot(p_eqn(i_p,:)==1) = tl_chemical_potential(T,P,td_ini(pc_id_out(i_p)),p_fsolve{i_p},g0_ini(pc_id_out(i_p)))';
+        em_chempot(p_eqn(i_p,:)==1) = tl_chemical_potential(T,P,td_ini(pc_id_out(i_p)),p_fsolve{i_p},g0_ini(pc_id_out(i_p)),v0_ini(pc_id_out(i_p)))';
     end    
-    chk_dg_ref   = max(abs(v'*em_chempot))
-    chk_Nsys_ref = max(abs(Npc_fsolve*alph_fsolve-Nsys'))    
+    chk_dg_ref   = max(abs(v'*em_chempot));
+    chk_Nsys_ref = max(abs(Npc_fsolve*alph_fsolve-Nsys'));    
 else
     alph_fsolve  = [];
     p_fsolve     = [];
     Npc_fsolve   = [];
     pc_id_fsolve = [];
+    chk_dg_ref   = nan;
+    chk_Nsys_ref = nan;
 end
 if options.TPDmin == 1
     plot(1:length(gmin_ref),gmin_ref),title([dg_it1,i_ref,length(pc_id)]),drawnow
@@ -216,12 +219,12 @@ function g = g_fun(x,g0,T,P,phs_name,td,v0,rho_w,eps_di)
 p{1}    = (td.p_from_z_cons*[1; x])';
 g       = tl_gibbs_energy(T,P,phs_name,td,p,g0,v0,rho_w,eps_di)/8.3144/T;
 end
-function Feqn = tl_dmu(x,T,P,mineral_names,Nsys,td_eqn,p_eqn,g0_eqn,v,em_comps)
+function Feqn = tl_dmu(x,T,P,mineral_names,Nsys,td_eqn,p_eqn,g0_eqn,v0_eqn,v,em_comps)
 em_chempot = zeros(size(p_eqn,2),1);
 em_props = [x(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));ones(sum(sum(p_eqn,2)==1),1)];
 alph_out = x(sum(sum(p_eqn(sum(p_eqn,2)>1,:)))+1:sum(sum(p_eqn(sum(p_eqn,2)>1,:)))+length(mineral_names));
 for i_p = 1:length(mineral_names)    
-    em_chempot(p_eqn(i_p,:)==1) = tl_chemical_potential(T,P,td_eqn(i_p),em_props(p_eqn(i_p,:)==1)',g0_eqn(i_p))';
+    em_chempot(p_eqn(i_p,:)==1) = tl_chemical_potential(T,P,td_eqn(i_p),em_props(p_eqn(i_p,:)==1)',g0_eqn(i_p),v0_eqn(i_p))';
 end
 Feqn = [p_eqn(sum(p_eqn,2)>1,1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))))*em_props(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:)))) - ones(size(p_eqn(sum(p_eqn,2)>1,:),1),1);
         v'*em_chempot;

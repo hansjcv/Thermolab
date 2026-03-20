@@ -1,10 +1,16 @@
 clear,figure(1),clf,colormap jet,addpath ../,addpath ../Utilities/
-runname  = 'soapstone_2022_02_14_n150_nz15_full_0_5kb'; 
+runname  = 'soapstone_2026_03_20_full_0_5kb'; 
 load(['linprog_run_' runname]);                                          % load linprog run data
 molm      = molmass_fun(Cname);
-solv_tol  = 100;
+solv_tol  = 1;
 phs_modes = zeros(length(T2d(:)),length(phs_name));
-for iPT = 1:length(T2d(:))    
+for iPT = 1:length(T2d(:))
+    if sum(alph_fsolve{iPT}<0)==0 && isreal(alph_fsolve{iPT}) && ~isempty(alph_fsolve{iPT}) && chk_dg_ref(iPT)<1
+        alph_all{iPT} = alph_fsolve{iPT};
+        Npc_all{iPT} = Npc_fsolve{iPT};
+        p_all{iPT}(pc_id_fsolve{iPT}) = p_fsolve{iPT};
+        pc_id_all{iPT} = pc_id_fsolve{iPT};    
+    end
     [pc_id,phi,Cwt,Npc,rho,mu,p_out,phiw] = postprocess_fun(T2d(iPT),P2d(iPT),td,alph_all{iPT},Npc_all{iPT},molm,p_all{iPT},pc_id_all{iPT},phs_name,solv_tol,'CORK','S14');    %     Cf(iPT) = Cwt(1,pc_id==1);
     fluid_id             =    strcmp(phs_name(pc_id),fluid);
     solid_id             =   ~strcmp(phs_name(pc_id),fluid);

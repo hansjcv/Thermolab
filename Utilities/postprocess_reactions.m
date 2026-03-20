@@ -1,5 +1,5 @@
 function [em_comps,em_names,em_props,p_eqn] = postprocess_reactions(T,P,td,pc_id,p_out)
-g0       = tl_g0(T,P,td);
+[g0,v0]  = tl_g0(T,P,td);
 em_comps = cell2mat({td(pc_id).n_em}');
 em_names = cell(size(em_comps,1),1);
 em_props = zeros(size(em_comps,1),1);
@@ -21,12 +21,12 @@ for i_sol = 1:length(p_out)
             cnt = cnt + 1;            
             em_names(p_eqn(cnt,:)==1) = td(i_sol).p_name;            
             em_props(p_eqn(cnt,:)==1) = p_out{i_sol}(i_p,:)';     
-            mu_lp(p_eqn(cnt,:)==1) = tl_chemical_potential(T,P,td(i_sol),p_out{i_sol}(i_p,:),g0(i_sol));
+            mu_lp(p_eqn(cnt,:)==1) = tl_chemical_potential(T,P,td(i_sol),p_out{i_sol}(i_p,:),g0(i_sol),v0(i_sol));
         end
     end
 end
 v = null(em_comps','r');
-disp_reactions(em_names,v);
+% disp_reactions(em_names,v);
 chk = max(abs(v'*mu_lp));
-disp(chk)
+% disp(chk)
 
