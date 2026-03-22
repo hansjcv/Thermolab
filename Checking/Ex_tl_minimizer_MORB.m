@@ -1,5 +1,5 @@
 clear,clf,addpath ../ ../Solutions ../Utilities ../EOS
-T = 850 + 273.15;% 880 + 273.15;
+T = 700 + 273.15;% 880 + 273.15;
 P = 8e8;%8e8;%26.7424*1e8;
 Cname_oxy = {'SiO2','Al2O3'  ,'CaO'   ,'MgO'  , 'FeO' ,'K2O','Na2O', 'TiO2','H2O'};
 nO        =  0.467;
@@ -20,7 +20,7 @@ options.nref        = 150;
 options.eps_dg      = 1e-3;
 options.fsolve      = 1;
 options.TPDmin      = 1;
-options.use_pgrid   = 1;
+options.use_pgrid   = 0;
 % Minimization refinement
 [alph_all,Npc_all,pc_id_ref,p_ref,g_min,alph_fsolve,Npc_fsolve,pc_id_fsolve,p_fsolve,dg_ref,chk_Nsys_ref] = tl_minimizer(T,P,Nsys,phs_name,p,td,options);
 molm = molmass_fun(Cname);
