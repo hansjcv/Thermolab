@@ -66,7 +66,11 @@ for i_ref = 1:nref
     elseif options.solver == 2
         [alph,gmin,exitflag(i_ref)] = opti_clp([],g,Npc,Nsys,Nsys,LB);
     else
-        [alph,gmin,exitflag(i_ref),~,lambda] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display',disp_type,'Algorithm',lp_algorithm));
+        try
+            [alph,gmin,exitflag(i_ref),~,lambda] = linprog(g,[],[],Npc,Nsys,LB,[],optimset('Display',disp_type,'Algorithm',lp_algorithm));
+        catch
+            break
+        end
     end
     if exitflag(i_ref) ~= 1,break,end
     gmin_ref(i_ref) = gmin*1e3;alph_iref{i_ref} = alph;p_iref{i_ref} = p; Nphs_iref{i_ref} = Npc; psc_id_iref{i_ref} = pc_id; g_iref{i_ref} = g;
