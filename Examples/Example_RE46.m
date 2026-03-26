@@ -1,9 +1,9 @@
 clear,clf,addpath ../ ../Solutions ../Utilities ../EOS
 T = linspace(1000,1400,20)+273.15;%1252.476+273.15;%1080 + 273.15;
 P = 1e5;            
-Cname_oxy = {'SiO2','Al2O3'  ,'CaO'   ,'MgO'  , 'FeO' ,'K2O','Na2O', 'TiO2','Cr2O3'};
+Cname_oxy = {'SiO2','Al2O3'  ,'CaO'   ,'MgO'  , 'FeO' ,'Na2O', 'TiO2','Cr2O3'};
 nO        =  0.35;
-Cmol_oxy  = [50.72 9.16 15.21 16.25 7.06 0.01 1.47 0.39  0.01];
+Cmol_oxy  = [50.72 9.16 15.21 16.25 7.06 1.47 0.39  0.01];
 [Nsys,Cname] = Oxidemol2Elementalmol(Cname_oxy,Cmol_oxy);
 Nsys(strcmp(Cname,'O')) = Nsys(strcmp(Cname,'O')) + nO; %
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
