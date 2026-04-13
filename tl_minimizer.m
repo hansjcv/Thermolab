@@ -184,29 +184,49 @@ solv_tol = options.solv_tol;
 Npc(:,alph<=alph_tol)   = []; % throw out zeros
 pc_id(alph<=alph_tol)   = []; % throw out zeros
 alph(alph<=alph_tol)    = []; % throw out zeros
-if options.fsolve == 1    
+if options.fsolve == 1            
     [alph_out,Npc_out,p_out,pc_id_out] = cluster_p(alph,Npc,p,pc_id,solv_tol,phs_name);
-    p_fsolve          = cell(size(pc_id_out));
-    pc_id_fsolve      = pc_id_out;
-    [em_comps,em_names,em_props,p_eqn] = postprocess_reactions(T,P,td_ini,pc_id_out,p_out);
-    v = null(em_comps','r');
-    options_fsolve = optimoptions('fsolve','Algorithm','trust-region-dogleg','Display',options.fsolve_disp);%'MaxFunctionEvaluations',10000,'MaxIterations',10000,'StepTolerance',1e-16,'TolFun',1e-16
-    x0_fsolve      = [em_props(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));alph_out];
-    f              = @(x) tl_dmu(x,T,P,phs_name(pc_id_out),Nsys,td_ini(pc_id_out),p_eqn,g0_ini(pc_id_out),v0_ini(pc_id_out),v,em_comps);
-    x              = fsolve(f,x0_fsolve,options_fsolve); % find proportions
-    alph_fsolve    = x(sum(sum(p_eqn(sum(p_eqn,2)>1,:)))+1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))) + numel(pc_id_out));
-    p_ref          = x(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));
-    %% Postprocessing 2
-    em_props   = [p_ref;ones(sum(sum(p_eqn,2)==1),1)];
-    em_chempot = zeros(size(em_props));
-    Npc_fsolve = zeros(numel(Nsys),numel(pc_id_out));
-    for i_p = 1:length(pc_id_out)
-        p_fsolve{i_p}    = em_props(p_eqn(i_p,:)==1)';
-        Npc_fsolve(:,i_p)           = p_fsolve{i_p}*em_comps(p_eqn(i_p,:)==1,:);
-        em_chempot(p_eqn(i_p,:)==1) = tl_chemical_potential(T,P,td_ini(pc_id_out(i_p)),p_fsolve{i_p},g0_ini(pc_id_out(i_p)),v0_ini(pc_id_out(i_p)))';
-    end    
-    chk_dg_ref   = max(abs(v'*em_chempot));
-    chk_Nsys_ref = max(abs(Npc_fsolve*alph_fsolve-Nsys'));    
+    for i_fsolve = 1:3        
+        p_fsolve          = cell(size(pc_id_out));
+        pc_id_fsolve      = pc_id_out;
+        [em_comps,em_names,em_props,p_eqn] = postprocess_reactions(T,P,td_ini,pc_id_out,p_out,options.show_react);
+        v = null(em_comps','r');
+        options_fsolve = optimoptions('fsolve','Algorithm','trust-region-dogleg','Display',options.fsolve_disp);%'MaxFunctionEvaluations',10000,'MaxIterations',10000,'StepTolerance',1e-16,'TolFun',1e-16
+        x0_fsolve      = [em_props(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));alph_out];
+        f              = @(x) tl_dmu(x,T,P,phs_name(pc_id_out),Nsys,td_ini(pc_id_out),p_eqn,g0_ini(pc_id_out),v0_ini(pc_id_out),v,em_comps);
+        x              = fsolve(f,x0_fsolve,options_fsolve); % find proportions
+        alph_fsolve    = x(sum(sum(p_eqn(sum(p_eqn,2)>1,:)))+1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))) + numel(pc_id_out));
+        p_ref          = x(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));
+        %% Postprocessing 2
+        em_props   = [p_ref;ones(sum(sum(p_eqn,2)==1),1)];
+        em_chempot = zeros(size(em_props));
+        Npc_fsolve = zeros(numel(Nsys),numel(pc_id_out));
+        for i_p = 1:length(pc_id_out)
+            p_fsolve{i_p}    = em_props(p_eqn(i_p,:)==1)';
+            Npc_fsolve(:,i_p)           = p_fsolve{i_p}*em_comps(p_eqn(i_p,:)==1,:);
+            em_chempot(p_eqn(i_p,:)==1) = tl_chemical_potential(T,P,td_ini(pc_id_out(i_p)),p_fsolve{i_p},g0_ini(pc_id_out(i_p)),v0_ini(pc_id_out(i_p)))';
+        end
+        chk_dg_ref   = max(abs(v'*em_chempot));
+        chk_Nsys_ref = max(abs(Npc_fsolve*alph_fsolve-Nsys'));
+         if isreal(alph_fsolve)
+            disp('real alph')
+        else
+            disp('im alph')            
+        end
+        if sum(alph_fsolve<0)==0
+            disp('positive alph')
+            break
+        else
+            disp('negative alph')
+            alph_out(alph_fsolve<0) = [];
+            pc_id_minus = pc_id_out(alph_fsolve<0);
+            pc_id_out(alph_fsolve<0) = [];                        
+            for i_out = 1:numel(pc_id_minus)
+                p_out{pc_id_minus(i_out)} = {};
+            end
+        end
+        
+    end
 else
     alph_fsolve  = [];
     p_fsolve     = [];
