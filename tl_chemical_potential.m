@@ -56,5 +56,9 @@ elseif mod_id == 3
     a = p; 
     a(a==0) = z_tol;
 end
-mu = cell2mat(g0) + R*T*log(a) + RTlngam;
+mu0 = cell2mat(g0);
+if mod_id == 5
+    mu0(1:end-1) = mu0(1:end-1) + R*T*log(1000/18.0150);
+end
+mu = mu0 + R*T*log(a) + RTlngam;
 
