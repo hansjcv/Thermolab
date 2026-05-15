@@ -160,7 +160,7 @@ for i_ref = 1:nref
     end
     if disp_ref == 1
         if options.TPDmin == 1
-            plot(1:i_ref,gmin_ref(1:i_ref)),title([dg_it1,i_ref,length(pc_id)]),drawnow
+            plot(1:i_ref,gmin_ref(1:i_ref)),title(['diff g-system = ' num2str(dg_it1)] ,['npc = ' num2str(length(pc_id))]),xlabel('n iteration'),ylabel('system G'),drawnow
             if i_ref>1
                 fprintf('diff g-system: %e\n', (gmin_old-gmin)*1e3);
             end
@@ -236,7 +236,7 @@ else
     chk_Nsys_ref = nan;
 end
 if options.TPDmin == 1
-    plot(1:length(gmin_ref),gmin_ref),title([dg_it1,i_ref,length(pc_id)]),drawnow
+    plot(1:length(gmin_ref),gmin_ref),title(['diff g-system = ' num2str(dg_it1)] ,['npc = ' num2str(length(pc_id))]),xlabel('n iteration'),ylabel('system G'),drawnow
 else
     plot(1:length(gmin_ref),gmin_ref),title([dg_it,i_ref,length(pc_id),max(z_window)]),drawnow
 end

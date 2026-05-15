@@ -1,12 +1,12 @@
 clear,clf,addpath ../ ../Utilities/ ../Solutions/ ../EOS
 run_name = 'example_PTpoint';
 T      = 600 + 273.15; %K
-P      = 2e9; % Pa
+P      = 0.1e9; % Pa
 solmod = 'Ultramafic'; % solution model file name. See Solutions subfolder for more
 Cname  = {'Si' ,'Al', 'Fe'  'Mg',    'H','O'             }; % System components
 Nsys   = [34     2     2    46+1     62+3  150+0.0001+3]; % system composition in elemental mole.
 % Choose possible phases to consider in the equilibrium calculation (in the Gibbs minimization)
-phs_name = {'Chlorite','Garnet','Spinel','Antigorite','Brucite','Olivine','Orthopyroxene','anth,tc-ds633','Talc','O2,tc-ds633','q,tc-ds633','per,tc-ds633','cor,tc-ds633','H2O,tc-ds633'};
+phs_name = {'Chlorite','Garnet','Spinel','Antigorite','Brucite','Olivine','Orthopyroxene','Anthophyllite','Talc','O2,tc-ds633','q,tc-ds633','per,tc-ds633','cor,tc-ds633','H2O,tc-ds633'};
 td       = init_thermo(phs_name,Cname,solmod); % initialize thermodynamic data
 for ip = 1:length(phs_name),td(ip).nc(:) = 3;end
 p        = props_generate(td);                 % generate pseudocompounds
