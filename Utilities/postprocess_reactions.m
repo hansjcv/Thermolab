@@ -1,4 +1,4 @@
-function [em_comps,em_names,em_props,p_eqn] = postprocess_reactions(T,P,td,pc_id,p_out,disp_reacts)
+function [em_comps,em_names,em_props,p_eqn,chk,em_pc_id,em_g0] = postprocess_reactions(T,P,td,pc_id,p_out,disp_reacts)
 if ~exist('disp_reacts','var')
     disp_reacts = 0;
 end
@@ -6,6 +6,8 @@ end
 em_comps = cell2mat({td(pc_id).n_em}');
 em_names = cell(size(em_comps,1),1);
 em_props = zeros(size(em_comps,1),1);
+em_pc_id = zeros(size(em_comps,1),1);
+em_g0    = zeros(size(em_comps,1),1);
 mu_lp    = zeros(size(em_comps,1),1);
 p_eqn    = zeros(numel(pc_id),size(em_comps,1));
 np       = zeros(1,numel(pc_id));
@@ -15,7 +17,9 @@ end
 ip_end = cumsum(np);
 ip_start = ip_end-np+1;
 for i_p = 1:numel(pc_id)
-    p_eqn(i_p,ip_start(i_p):ip_end(i_p)) = 1;   
+    p_eqn(i_p,ip_start(i_p):ip_end(i_p)) = 1;
+    em_pc_id(ip_start(i_p):ip_end(i_p)) = pc_id(i_p);
+    em_g0(ip_start(i_p):ip_end(i_p)) = g0{pc_id(i_p)};
 end
 cnt = 0;
 for i_sol = 1:length(p_out)
@@ -23,15 +27,15 @@ for i_sol = 1:length(p_out)
         if ~isempty(p_out{i_sol})
             cnt = cnt + 1;            
             em_names(p_eqn(cnt,:)==1) = td(i_sol).p_name;            
-            em_props(p_eqn(cnt,:)==1) = p_out{i_sol}(i_p,:)';     
+            em_props(p_eqn(cnt,:)==1) = p_out{i_sol}(i_p,:)';               
             mu_lp(p_eqn(cnt,:)==1) = tl_chemical_potential(T,P,td(i_sol),p_out{i_sol}(i_p,:),g0(i_sol),v0(i_sol));
         end
     end
 end
-if disp_reacts == 1
-    v = null(em_comps','r');
-    disp_reactions(em_names,v);
-    chk = max(abs(v'*mu_lp));
+v = null(em_comps','r');
+chk = max(abs(v'*mu_lp));
+if disp_reacts == 1    
+    disp_reactions(em_names,v);    
     disp(['delta g = ' num2str(chk)])
 end
 

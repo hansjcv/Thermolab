@@ -1,4 +1,4 @@
-function phases = get_pure_phases(db_name,Cname,is_liq,is_gas,is_aq)
+function [phases,Ncomp] = get_pure_phases(db_name,Cname,is_liq,is_gas,is_aq)
 load('tl_dataset','elements','db_names','phs_names','nphs')
 if nargin < 3
     is_aq   = 0;
@@ -64,7 +64,11 @@ switch db_name
     case 'Barton82'        
         liq_id = [];
         gas_id = 4:5;
-        aq_id  = [];            
+        aq_id  = [];      
+    case 'DB04'
+        liq_id = [];
+        gas_id = [];
+        aq_id  = [];
 end
 if is_aq == 0, exc_id = [exc_id, aq_id]; end
 if is_gas == 0,exc_id = [exc_id, gas_id]; end
@@ -83,5 +87,7 @@ c_ind = find_c_ind(Cname,elements);
         [~,Cname] = Oxidemol2Elementalmol(Cname_oxide,zeros(size(Cname_oxide)));
         c_ind = find_c_ind(Cname,elements);
     end
-inc_phs_id  = sum(nphs(:,c_ind==-1),2)==0;
+inc_phs_id  = sum(abs(nphs(:,c_ind==-1)),2)==0;
 phases      = phases(inc_phs_id);
+Ncomp       = nphs(inc_phs_id,c_ind>0);
+Ncomp       = Ncomp(:,c_ind(c_ind>0));

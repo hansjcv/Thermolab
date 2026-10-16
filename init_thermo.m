@@ -22,15 +22,37 @@ end
 if exist('Cname','var')
     c_ind = find_c_ind(Cname,elements);
     oxide_flag = 0;
+    comp_flag = 0;
     if sum(c_ind>0)==0
-        Cname_oxide = Cname;
-        [~,Cname] = Oxidemol2Elementalmol(Cname_oxide,zeros(size(Cname_oxide)));
-        c_ind = find_c_ind(Cname,elements);
-        oxide_flag = 1;
+        for i_c = 1:length(Cname)
+            comp_id_loc = find(strcmp(phs_names,Cname(i_c)));
+            if ~isempty(comp_id_loc)
+                comp_id(i_c) = comp_id_loc;
+            else
+                comp_id(i_c) = 0;
+            end
+        end
+        if sum(comp_id)>0
+            comp_name = Cname;
+            Nbasis = nphs(comp_id,:)';
+            Cname = elements(sum(abs(Nbasis),2)>0);
+            Nbasis = Nbasis(sum(abs(Nbasis),2)>0,:);
+            ieq    = indep_eqns(Nbasis);
+            Amat_basis = inv(Nbasis(ieq,1:rank(Nbasis)));
+            c_ind = find_c_ind(Cname,elements);
+            comp_flag = 1;
+        else
+            Cname_oxide = Cname;
+            [~,Cname] = Oxidemol2Elementalmol(Cname_oxide,zeros(size(Cname_oxide)));
+            c_ind = find_c_ind(Cname,elements);
+            oxide_flag = 1;
+        end
     end
 else
     c_ind = 1:length(elements);
     oxide_flag = 0;
+    comp_flag = 0;
+    Cname = elements;
 end
 for i_sol = 1:length(mineral)
     if ~strcmp(mineral(i_sol),'Aq-fluid')
@@ -144,8 +166,16 @@ for i_sol = 1:length(mineral)
             z_name = [];
             z_fac  = [];
         end
-        if sum(c_ind==-1)>0
-            inc_phs_id  = sum(Nphs(:,c_ind==-1),2)==0;
+        if sum(c_ind==-1)>0 
+            if comp_flag == 1
+                n_em                     = zeros(size(Nphs,1),sum(c_ind~=-1));
+                n_em(:,c_ind(c_ind~=-1)) = Nphs(:,c_ind~=-1);
+                % Nphs2 = (Amat_basis*n_em(:,1:rank(Nbasis))')';
+                Nphs2 = (Amat_basis*n_em(:,ieq)')';
+                inc_phs_id  = sum(abs(Nphs2),2)>0;
+            else
+                inc_phs_id  = sum(Nphs(:,c_ind==-1),2)==0;
+            end
             p_id   = p_id(inc_phs_id);
             p_name = p_name(inc_phs_id);
             alp    = alp(:,inc_phs_id);
@@ -180,12 +210,25 @@ for i_sol = 1:length(mineral)
         end
         n_em = zeros(size(Nphs,1),sum(c_ind~=-1));
         n_em(:,c_ind(c_ind~=-1))    = Nphs(:,c_ind~=-1);
+        Nphs_ele = n_em;
         if oxide_flag == 1
             n_em_ox= zeros(size(Nphs,1),numel(Cname_oxide));
             for i_em = 1:size(n_em,1)
                 n_em_ox(i_em,:) = Elementalmol2Oxidemol(Cname,n_em(i_em,:));
             end
             n_em = n_em_ox;
+        elseif comp_flag == 1            
+            % n_em_basis= zeros(size(Nphs,1),numel(comp_name));
+            % Nphs2 = (Amat_basis*n_em(:,1:rank(Nbasis))')';
+            n_em_basis = Nphs2;
+            chk = max(sum(abs(Nbasis*n_em_basis'-n_em')))
+            n_em = n_em_basis;
+
+            % Nphs2 = (Amat_basis*n_em(:,1:rank(Nbasis))')';
+            % n_em_basis = Nphs2;
+            % chk = max(sum(abs(Nbasis*n_em_basis'-n_em')))
+            % n_em = n_em_basis;
+
         end
         w(:,:,1) = w0;
         w(:,:,2) = wT;
@@ -225,6 +268,14 @@ for i_sol = 1:length(mineral)
         td(i_sol).alp     = alp;
         td(i_sol).w       = w;
         td(i_sol).n_em    = n_em;
+        td(i_sol).n_em_ele = Nphs_ele;
+        if comp_flag == 1
+            td(i_sol).Nbasis = Nbasis;
+            td(i_sol).elem = Cname;
+        else
+            td(i_sol).Nbasis = n_em;
+            td(i_sol).elem = Cname;
+        end
         td(i_sol).chg     = chg;
         td(i_sol).em_data = em_data;
         td(i_sol).dGex    = dGex;
@@ -270,6 +321,25 @@ for i_sol = 1:length(mineral)
         Nphs                     = nphs(p_id,:);
         n_em                     = zeros(size(Nphs,1),sum(c_ind~=-1));
         n_em(:,c_ind(c_ind~=-1)) = Nphs(:,c_ind~=-1);
+        Nphs_ele = n_em;
+        % if comp_flag == 1
+        %     n_em                     = zeros(size(Nphs,1),sum(c_ind~=-1));
+        %     n_em(:,c_ind(c_ind~=-1)) = Nphs(:,c_ind~=-1);
+        % end
+        if oxide_flag == 1
+            n_em_ox= zeros(size(Nphs,1),numel(Cname_oxide));
+            for i_em = 1:size(n_em,1)
+                n_em_ox(i_em,:) = Elementalmol2Oxidemol(Cname,n_em(i_em,:));
+            end
+            n_em = n_em_ox;
+        elseif comp_flag == 1
+            % n_em_basis= zeros(size(Nphs,1),numel(comp_name));
+            % Nphs2 = (Amat_basis*n_em(:,1:rank(Nbasis))')';
+            Nphs2 = (Amat_basis*n_em(:,ieq)')';
+            n_em_basis = Nphs2;
+            chk = max(sum(abs(Nbasis*n_em_basis'-n_em')))
+            n_em = n_em_basis;
+        end
         st                       = eye(numel(p_id));
         site_id                  = ones(1,numel(p_id));
         z_lim                    = [zeros(1,numel(p_id));ones(1,numel(p_id))*max_frac_fl];
@@ -288,6 +358,14 @@ for i_sol = 1:length(mineral)
             zeros(1,numel(p_id))];
         td(i_sol).w                  = zeros(numel(p_id),numel(p_id),3);
         td(i_sol).n_em               = n_em;
+        td(i_sol).n_em_ele           = Nphs_ele;
+        if comp_flag == 1
+            td(i_sol).Nbasis = Nbasis;
+            td(i_sol).elem = Cname;
+        else
+            td(i_sol).Nbasis = n_em;
+            td(i_sol).elem = Cname;
+        end
         td(i_sol).chg                = n_em(:,end);
         td(i_sol).zt                 = zt;
         td(i_sol).zmax               = zmax;

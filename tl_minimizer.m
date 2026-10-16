@@ -60,7 +60,7 @@ for i_ref = 1:nref
     g = g/8.3144/T;
     LB            = zeros(1,size(g,1));
     if options.solver == 1
-        Npc(Npc<1e-12)      =  0;  % Remove small number to avoid glpk instability
+        % Npc(Npc<1e-12)      =  0;  % Remove small number to avoid glpk instability
         [alph,gmin]  =  glpk(g,Npc,Nsys,LB,[],repmat('S',1,size(Npc,1)));
         if ~isempty(alph),exitflag(i_ref)=1;end
     elseif options.solver == 2
@@ -73,7 +73,7 @@ for i_ref = 1:nref
         end
     end
     if exitflag(i_ref) ~= 1,break,end
-    gmin_ref(i_ref) = gmin*1e3;alph_iref{i_ref} = alph;p_iref{i_ref} = p; Nphs_iref{i_ref} = Npc; psc_id_iref{i_ref} = pc_id; g_iref{i_ref} = g;
+    gmin_ref(i_ref) = gmin*8.3144*T;alph_iref{i_ref} = alph;p_iref{i_ref} = p; Nphs_iref{i_ref} = Npc; psc_id_iref{i_ref} = pc_id; g_iref{i_ref} = g;
     dg_it  = 1e8;
     dg_it1 = 1e8;
     if i_ref<nref && dg_it>eps_dg || max(z_window)>dz_tol
@@ -97,7 +97,13 @@ for i_ref = 1:nref
                             x0{i_sol} = z_min(td(i_sol).site_var)';
                         end
                         try
-                            x1{i_sol} = fmincon(fun1,x0{i_sol},[],[],[],[],td_ini(i_sol).z_lim(1,:),td_ini(i_sol).z_lim(2,:),[],optimoptions('fmincon','Display','off'));
+                            x1{i_sol} = fmincon(fun1,x0{i_sol},[],[],[],[],td_ini(i_sol).z_lim(1,:),td_ini(i_sol).z_lim(2,:),[],optimoptions('fmincon','SpecifyObjectiveGradient',false,'Display','off','MaxFunctionEvaluations',10000,'MaxIterations',10000,'StepTolerance',1e-16,'TolFun',1e-16));                            
+                            % if td(i_sol).mod_id == 5
+                            %     mu0 = g0_ini{i_sol};
+                            %     mu0(1:end-1) = mu0(1:end-1)+8.3144*T*log(1000/18.015);
+                            %     act = exp((td(1).n_em*-lambda.eqlin*8.3144*T-mu0')/8.3144/T);
+                            %     x1{i_sol} = act(1:end-1);
+                            % end
                             gmin_int(i_sol) = g_fun(x1{i_sol},g0(i_sol),T,P,phs_name(i_sol),td(i_sol),v0(i_sol),rho_w(i_sol),eps_di(i_sol));
                             p_ref{i_sol} = (td(i_sol).p_from_z_cons*[1; x1{i_sol}])';                            
                             x0{i_sol} = x1{i_sol};
@@ -143,7 +149,7 @@ for i_ref = 1:nref
     end
     if options.show_react == 1
         [~,~,p_out,pc_id_out] = cluster_p(alph,Npc,p,pc_id,1,phs_name);
-        postprocess_reactions(T,P,td,pc_id_out,p_out,[]);
+        postprocess_reactions(T,P,td,pc_id_out,p_out,options.show_react);
     end
     if i_ref>3 && dg_it<eps_dg || max(z_window)<dz_tol,break,end
     if i_ref < nref && gmin_old >= gmin
@@ -160,7 +166,7 @@ for i_ref = 1:nref
     end
     if disp_ref == 1
         if options.TPDmin == 1
-            plot(1:i_ref,gmin_ref(1:i_ref)),title(['diff g-system = ' num2str(dg_it1)] ,['npc = ' num2str(length(pc_id))]),xlabel('n iteration'),ylabel('system G'),drawnow
+            plot(1:i_ref,gmin_ref(1:i_ref)),title([dg_it1,i_ref,length(pc_id)]),drawnow
             if i_ref>1
                 fprintf('diff g-system: %e\n', (gmin_old-gmin)*1e3);
             end
@@ -191,7 +197,7 @@ if options.fsolve == 1
         pc_id_fsolve      = pc_id_out;
         [em_comps,em_names,em_props,p_eqn] = postprocess_reactions(T,P,td_ini,pc_id_out,p_out,options.show_react);
         v = null(em_comps','r');
-        options_fsolve = optimoptions('fsolve','Algorithm','trust-region-dogleg','Display',options.fsolve_disp);%'MaxFunctionEvaluations',10000,'MaxIterations',10000,'StepTolerance',1e-16,'TolFun',1e-16
+        options_fsolve = optimoptions('fsolve','Algorithm','trust-region-dogleg','Display',options.fsolve_disp,'MaxFunctionEvaluations',10000,'MaxIterations',10000,'StepTolerance',1e-16,'TolFun',1e-16);%
         x0_fsolve      = [em_props(1:sum(sum(p_eqn(sum(p_eqn,2)>1,:))));alph_out];
         f              = @(x) tl_dmu(x,T,P,phs_name(pc_id_out),Nsys,td_ini(pc_id_out),p_eqn,g0_ini(pc_id_out),v0_ini(pc_id_out),v,em_comps);
         x              = fsolve(f,x0_fsolve,options_fsolve); % find proportions
@@ -206,23 +212,47 @@ if options.fsolve == 1
             Npc_fsolve(:,i_p)           = p_fsolve{i_p}*em_comps(p_eqn(i_p,:)==1,:);
             em_chempot(p_eqn(i_p,:)==1) = tl_chemical_potential(T,P,td_ini(pc_id_out(i_p)),p_fsolve{i_p},g0_ini(pc_id_out(i_p)),v0_ini(pc_id_out(i_p)))';
         end
-        chk_dg_ref   = max(abs(v'*em_chempot));
+        if ~isempty(v)
+            chk_dg_ref   = max(abs(v'*em_chempot));
+        else
+            if isreal(alph_fsolve)
+                chk_dg_ref = 0;
+            else
+                chk_dg_ref = nan;
+            end
+        end
         chk_Nsys_ref = max(abs(Npc_fsolve*alph_fsolve-Nsys'));
          if isreal(alph_fsolve)
-            disp('real alph')
+            % disp('real alph')
         else
-            disp('im alph')            
+            % disp('im alph')            
         end
         if sum(alph_fsolve<0)==0
-            disp('positive alph')
+            % disp('positive alph')
             break
         else
-            disp('negative alph')
-            alph_out(alph_fsolve<0) = [];
-            pc_id_minus = pc_id_out(alph_fsolve<0);
-            pc_id_out(alph_fsolve<0) = [];                        
-            for i_out = 1:numel(pc_id_minus)
-                p_out{pc_id_minus(i_out)} = {};
+            if isreal(alph_fsolve)
+                % disp('negative alph')
+                alph_out(alph_fsolve<0) = [];
+                pc_id_minus = alph_fsolve<0;
+                pc_id_out_unique = unique(pc_id_out);
+                pc_id_out(alph_fsolve<0) = [];                
+                cnt = 0;
+                for i_out = 1:numel(pc_id_out_unique)
+                    for i_pc = 1:size(p_out{pc_id_out_unique(i_out)},1)
+                        cnt = cnt + 1;
+                        if pc_id_minus(cnt)==1
+                            p_out{pc_id_out_unique(i_out)}(i_pc,:) = [];
+                        end
+                    end
+                end
+            else
+                alph_fsolve  = [];
+                p_fsolve     = [];
+                Npc_fsolve   = [];
+                pc_id_fsolve = [];
+                chk_dg_ref   = nan;
+                break
             end
         end
         
@@ -233,10 +263,11 @@ else
     Npc_fsolve   = [];
     pc_id_fsolve = [];
     chk_dg_ref   = nan;
-    chk_Nsys_ref = nan;
+        chk_Nsys_ref = max(abs(Npc*alph-Nsys'));
+    % chk_Nsys_ref = nan;
 end
 if options.TPDmin == 1
-    plot(1:length(gmin_ref),gmin_ref),title(['diff g-system = ' num2str(dg_it1)] ,['npc = ' num2str(length(pc_id))]),xlabel('n iteration'),ylabel('system G'),drawnow
+    plot(1:length(gmin_ref),gmin_ref),title([dg_it1,i_ref,length(pc_id)]),drawnow
 else
     plot(1:length(gmin_ref),gmin_ref),title([dg_it,i_ref,length(pc_id),max(z_window)]),drawnow
 end
